@@ -1,4 +1,3 @@
-import DashboardLayout from "../../components/DashboardLayout";
 import { BookOpen, ClipboardList, CreditCard, TrendingUp } from "lucide-react";
 
 const stats = [
@@ -29,7 +28,7 @@ const stats = [
 ];
 
 const TutorDashboard = () => (
-  <DashboardLayout role="tutor">
+  <div>
     <h1 className="text-2xl font-bold">Tutor Dashboard</h1>
     <p className="text-muted-foreground">
       Manage your applications and tuitions.
@@ -52,7 +51,7 @@ const TutorDashboard = () => (
         </div>
       ))}
     </div>
-  </DashboardLayout>
+  </div>
 );
 
 export default TutorDashboard;

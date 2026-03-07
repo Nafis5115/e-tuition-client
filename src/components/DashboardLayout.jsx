@@ -1,4 +1,4 @@
-import { NavLink as RouterNavLink, useLocation } from "react-router";
+import { Outlet, NavLink as RouterNavLink, useLocation } from "react-router";
 import {
   LayoutDashboard,
   BookOpen,
@@ -11,6 +11,7 @@ import {
   UserCog,
   ClipboardList,
 } from "lucide-react";
+import useRole from "../hooks/useRole";
 
 const studentLinks = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -18,34 +19,59 @@ const studentLinks = [
   { name: "Post Tuition", path: "/dashboard/post-tuition", icon: PlusCircle },
   { name: "Applied Tutors", path: "/dashboard/applied-tutors", icon: Users },
   { name: "Payments", path: "/dashboard/payments", icon: CreditCard },
-  { name: "Profile Settings", path: "/dashboard/profile", icon: Settings },
+  {
+    name: "Profile Settings",
+    path: "/dashboard/profile-settings",
+    icon: Settings,
+  },
 ];
 
 const tutorLinks = [
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { name: "Dashboard", path: "/dashboard/tutor", icon: LayoutDashboard },
   {
     name: "My Applications",
-    path: "/dashboard/my-applications",
+    path: "/dashboard/tutor/my-applications",
     icon: ClipboardList,
   },
-  { name: "Ongoing Tuitions", path: "/dashboard/ongoing", icon: BookOpen },
-  { name: "Revenue History", path: "/dashboard/revenue", icon: CreditCard },
-  { name: "Profile Settings", path: "/dashboard/profile", icon: Settings },
+  {
+    name: "Ongoing Tuitions",
+    path: "/dashboard/tutor/ongoing-tuitions",
+    icon: BookOpen,
+  },
+  {
+    name: "Revenue History",
+    path: "/dashboard/tutor/revenue-history",
+    icon: CreditCard,
+  },
+  {
+    name: "Profile Settings",
+    path: "/dashboard/profile-settings",
+    icon: Settings,
+  },
 ];
 
 const adminLinks = [
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "User Management", path: "/dashboard/users", icon: UserCog },
+  { name: "Dashboard", path: "/dashboard/admin", icon: LayoutDashboard },
+  {
+    name: "User Management",
+    path: "/dashboard/admin/user-management",
+    icon: UserCog,
+  },
   {
     name: "Tuition Management",
-    path: "/dashboard/tuition-mgmt",
+    path: "/dashboard/admin/tuition-management",
     icon: BookOpen,
   },
-  { name: "Reports & Analytics", path: "/dashboard/reports", icon: BarChart3 },
-  { name: "Settings", path: "/dashboard/profile", icon: Settings },
+  {
+    name: "Reports & Analytics",
+    path: "/dashboard/admin/reports-analytics",
+    icon: BarChart3,
+  },
+  { name: "Settings", path: "/dashboard/admin/profile", icon: Settings },
 ];
 
-const DashboardLayout = ({ children, role }) => {
+const DashboardLayout = () => {
+  const role = useRole();
   const links =
     role === "admin"
       ? adminLinks
@@ -80,7 +106,9 @@ const DashboardLayout = ({ children, role }) => {
         </nav>
       </aside>
 
-      <div className="flex-1 p-4 md:p-8">{children}</div>
+      <div className="flex-1 p-4 md:p-8">
+        <Outlet></Outlet>
+      </div>
     </div>
   );
 };

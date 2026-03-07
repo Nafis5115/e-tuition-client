@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardLayout from "../../components/DashboardLayout";
+
 import { Users, BookOpen, CreditCard, BarChart3 } from "lucide-react";
 
 const stats = [
@@ -25,7 +25,7 @@ const stats = [
 ];
 
 const AdminDashboard = () => (
-  <DashboardLayout role="admin">
+  <div>
     <h1 className="text-2xl font-bold">Admin Dashboard</h1>
     <p className="text-muted-foreground">Platform overview and management.</p>
 
@@ -81,7 +81,7 @@ const AdminDashboard = () => (
         </div>
       </div>
     </div>
-  </DashboardLayout>
+  </div>
 );
 
 export default AdminDashboard;
