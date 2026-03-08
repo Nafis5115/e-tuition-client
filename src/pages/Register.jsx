@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-const RegisterPage = () => {
+const Register = () => {
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("Student");
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -39,7 +39,11 @@ const RegisterPage = () => {
   //   setter((prev) => prev.map((v, i) => (i === index ? value : v)));
   // };
 
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const handleOnSubmit = (data) => {
     data.role = role;
@@ -122,12 +126,17 @@ const RegisterPage = () => {
               <div className="relative">
                 <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  {...register("name")}
+                  {...register("name", {
+                    required: true,
+                  })}
                   id="name"
                   placeholder="Your full name"
                   className="pl-10"
                 />
               </div>
+              {errors.name?.type === "required" && (
+                <p className="text-red-500 text-sm">Name is required</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -135,13 +144,24 @@ const RegisterPage = () => {
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  {...register("email")}
+                  {...register("email", {
+                    required: true,
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                    },
+                  })}
                   id="reg-email"
                   type="email"
                   placeholder="you@example.com"
                   className="pl-10"
                 />
               </div>
+              {errors.email?.type === "required" && (
+                <p className="text-red-500 text-sm">Email is required</p>
+              )}
+              {errors.email?.type === "pattern" && (
+                <p className="text-red-500 text-sm">Email is not valid</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -149,12 +169,16 @@ const RegisterPage = () => {
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  {...register("phone")}
+                  {...register("phone", { required: true })}
                   id="phone"
+                  type="number"
                   placeholder="+880 1XXX-XXXXXX"
                   className="pl-10"
                 />
               </div>
+              {errors.phone?.type === "required" && (
+                <p className="text-red-500 text-sm">Phone number is required</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -164,7 +188,7 @@ const RegisterPage = () => {
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                 <Input
-                  {...register("password")}
+                  {...register("password", { required: true, minLength: 6 })}
                   id="reg-password"
                   type={showPass ? "text" : "password"}
                   placeholder="••••••••"
@@ -183,6 +207,14 @@ const RegisterPage = () => {
                   )}
                 </button>
               </div>
+              {errors.password?.type === "required" && (
+                <p className="text-red-500 text-sm">Password is required</p>
+              )}
+              {errors.password?.type === "minLength" && (
+                <p className="text-red-500 text-sm">
+                  Password must be 6 characters
+                </p>
+              )}
             </div>
 
             {/* Tutor Fields */}
@@ -310,4 +342,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default Register;

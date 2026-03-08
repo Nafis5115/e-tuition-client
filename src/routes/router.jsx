@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
 import LoginPage from "../pages/Login";
-import RegisterPage from "../pages/Register";
+import Register from "../pages/Register";
 import TuitionsPage from "../pages/Tuitions";
 import TuitionDetails from "../pages/TuitionDetails";
 import TutorsPage from "../pages/Tutors";
@@ -67,7 +67,7 @@ const router = createBrowserRouter([
       },
       {
         path: "register",
-        Component: RegisterPage,
+        Component: Register,
       },
       {
         path: "dashboard",
