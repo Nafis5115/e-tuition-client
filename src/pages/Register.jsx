@@ -17,29 +17,33 @@ import {
   Plus,
   X,
 } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 const RegisterPage = () => {
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("Student");
   const [photoPreview, setPhotoPreview] = useState(null);
-
-  const [qualifications, setQualifications] = useState([""]);
-  const [subjects, setSubjects] = useState([""]);
+  // const [qualifications, setQualifications] = useState([""]);
+  // const [subjects, setSubjects] = useState([""]);
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (file) setPhotoPreview(URL.createObjectURL(file));
   };
+  // const addField = (setter) => {
+  //   setter((prev) => [...prev, ""]);
+  // };
+  // const removeField = (setter, index) => {
+  //   setter((prev) => prev.filter((_, i) => i !== index));
+  // };
+  // const updateField = (setter, index, value) => {
+  //   setter((prev) => prev.map((v, i) => (i === index ? value : v)));
+  // };
 
-  const addField = (setter) => {
-    setter((prev) => [...prev, ""]);
-  };
+  const { register, handleSubmit } = useForm();
 
-  const removeField = (setter, index) => {
-    setter((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateField = (setter, index, value) => {
-    setter((prev) => prev.map((v, i) => (i === index ? value : v)));
+  const handleOnSubmit = (data) => {
+    data.role = role;
+    console.log(data);
   };
 
   return (
@@ -55,238 +59,242 @@ const RegisterPage = () => {
           </p>
         </div>
 
-        <div className="card-elevated rounded-xl border bg-card p-6 space-y-4">
-          {/* Profile Photo */}
-          <div className="flex justify-center">
-            <div className="relative">
-              <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-border bg-muted">
-                {photoPreview ? (
-                  <img
-                    src={photoPreview}
-                    alt="Profile preview"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <Camera className="h-8 w-8 text-muted-foreground" />
-                )}
-              </div>
+        <form onSubmit={handleSubmit(handleOnSubmit)}>
+          <div className="card-elevated rounded-xl border bg-card p-6 space-y-4">
+            <div className="flex justify-center">
+              <div className="relative">
+                <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-border bg-muted">
+                  {photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt="Profile preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Camera className="h-8 w-8 text-muted-foreground" />
+                  )}
+                </div>
 
-              <label
-                htmlFor="profile-photo"
-                className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md hover:bg-primary/90 transition-colors"
-              >
-                <Camera className="h-4 w-4" />
-              </label>
-
-              <input
-                id="profile-photo"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handlePhotoChange}
-              />
-            </div>
-          </div>
-
-          <p className="text-center text-xs text-muted-foreground">
-            Upload profile photo
-          </p>
-
-          {/* Role Selection */}
-          <div className="space-y-2">
-            <Label>I am a</Label>
-
-            <div className="grid grid-cols-2 gap-2">
-              {["Student", "Tutor"].map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRole(r)}
-                  className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
-                    role === r
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/50"
-                  }`}
+                <label
+                  htmlFor="profile-photo"
+                  className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md hover:bg-primary/90 transition-colors"
                 >
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
+                  <Camera className="h-4 w-4" />
+                </label>
 
-          {/* Name */}
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input id="name" placeholder="Your full name" className="pl-10" />
-            </div>
-          </div>
-
-          {/* Email */}
-          <div className="space-y-2">
-            <Label htmlFor="reg-email">Email</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="reg-email"
-                type="email"
-                placeholder="you@example.com"
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          {/* Phone */}
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="phone"
-                placeholder="+880 1XXX-XXXXXX"
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          {/* Password */}
-          <div className="space-y-2">
-            <Label htmlFor="reg-password">Password</Label>
-
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-
-              <Input
-                id="reg-password"
-                type={showPass ? "text" : "password"}
-                placeholder="••••••••"
-                className="pl-10 pr-10"
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPass(!showPass)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              >
-                {showPass ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Tutor Fields */}
-          {role === "Tutor" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="about">About</Label>
-                <Textarea
-                  id="about"
-                  placeholder="Tell us about yourself..."
-                  className="min-h-[80px]"
+                <input
+                  id="profile-photo"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhotoChange}
                 />
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="experience">Experience</Label>
-                <Input id="experience" placeholder="e.g. 5 years" />
-              </div>
+            <p className="text-center text-xs text-muted-foreground">
+              Upload profile photo
+            </p>
 
-              <div className="space-y-2">
-                <Label htmlFor="location">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5" /> Location
-                  </span>
-                </Label>
+            <div className="space-y-2">
+              <Label>I am a</Label>
 
-                <Input id="location" placeholder="e.g. Dhanmondi, Dhaka" />
-              </div>
-
-              {/* Qualifications */}
-              <div className="space-y-2">
-                <Label>Qualifications</Label>
-
-                {qualifications.map((q, i) => (
-                  <div key={i} className="flex gap-2">
-                    <Input
-                      placeholder={`Qualification ${i + 1}`}
-                      value={q}
-                      onChange={(e) =>
-                        updateField(setQualifications, i, e.target.value)
-                      }
-                    />
-
-                    {qualifications.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="shrink-0"
-                        onClick={() => removeField(setQualifications, i)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
+              <div className="grid grid-cols-2 gap-2">
+                {["Student", "Tutor"].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(r)}
+                    className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
+                      role === r
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    {r}
+                  </button>
                 ))}
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => addField(setQualifications)}
-                >
-                  <Plus className="mr-1 h-3.5 w-3.5" /> Add Qualification
-                </Button>
               </div>
+            </div>
 
-              {/* Subjects */}
-              <div className="space-y-2">
-                <Label>Subjects</Label>
-
-                {subjects.map((s, i) => (
-                  <div key={i} className="flex gap-2">
-                    <Input
-                      placeholder={`Subject ${i + 1}`}
-                      value={s}
-                      onChange={(e) =>
-                        updateField(setSubjects, i, e.target.value)
-                      }
-                    />
-
-                    {subjects.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="shrink-0"
-                        onClick={() => removeField(setSubjects, i)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => addField(setSubjects)}
-                >
-                  <Plus className="mr-1 h-3.5 w-3.5" /> Add Subject
-                </Button>
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  {...register("name")}
+                  id="name"
+                  placeholder="Your full name"
+                  className="pl-10"
+                />
               </div>
-            </>
-          )}
+            </div>
 
-          <Button className="w-full">Create Account</Button>
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="reg-email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  {...register("email")}
+                  id="reg-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  {...register("phone")}
+                  id="phone"
+                  placeholder="+880 1XXX-XXXXXX"
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="reg-password">Password</Label>
+
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+                <Input
+                  {...register("password")}
+                  id="reg-password"
+                  type={showPass ? "text" : "password"}
+                  placeholder="••••••••"
+                  className="pl-10 pr-10"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                >
+                  {showPass ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Tutor Fields */}
+            {/* {role === "Tutor" && (
+              <div>
+                <div className="space-y-2">
+                  <Label htmlFor="about">About</Label>
+                  <Textarea
+                    id="about"
+                    placeholder="Tell us about yourself..."
+                    className="min-h-[80px]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="experience">Experience</Label>
+                  <Input id="experience" placeholder="e.g. 5 years" />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location">
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5" /> Location
+                    </span>
+                  </Label>
+
+                  <Input id="location" placeholder="e.g. Dhanmondi, Dhaka" />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Qualifications</Label>
+
+                  {qualifications.map((q, i) => (
+                    <div key={i} className="flex gap-2">
+                      <Input
+                        placeholder={`Qualification ${i + 1}`}
+                        value={q}
+                        onChange={(e) =>
+                          updateField(setQualifications, i, e.target.value)
+                        }
+                      />
+
+                      {qualifications.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="shrink-0"
+                          onClick={() => removeField(setQualifications, i)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => addField(setQualifications)}
+                  >
+                    <Plus className="mr-1 h-3.5 w-3.5" /> Add Qualification
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Subjects</Label>
+
+                  {subjects.map((s, i) => (
+                    <div key={i} className="flex gap-2">
+                      <Input
+                        placeholder={`Subject ${i + 1}`}
+                        value={s}
+                        onChange={(e) =>
+                          updateField(setSubjects, i, e.target.value)
+                        }
+                      />
+
+                      {subjects.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="shrink-0"
+                          onClick={() => removeField(setSubjects, i)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => addField(setSubjects)}
+                  >
+                    <Plus className="mr-1 h-3.5 w-3.5" /> Add Subject
+                  </Button>
+                </div>
+              </div>
+            )} */}
+
+            <Button type="submit" className="w-full">
+              Create Account
+            </Button>
+          </div>
+        </form>
 
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
