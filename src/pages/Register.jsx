@@ -22,12 +22,9 @@ const RegisterPage = () => {
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("Student");
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [about, setAbout] = useState("");
-  const [experience, setExperience] = useState("");
-  const [location, setLocation] = useState("");
+
   const [qualifications, setQualifications] = useState([""]);
   const [subjects, setSubjects] = useState([""]);
-
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (file) setPhotoPreview(URL.createObjectURL(file));
@@ -189,20 +186,13 @@ const RegisterPage = () => {
                 <Textarea
                   id="about"
                   placeholder="Tell us about yourself..."
-                  value={about}
-                  onChange={(e) => setAbout(e.target.value)}
                   className="min-h-[80px]"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="experience">Experience</Label>
-                <Input
-                  id="experience"
-                  placeholder="e.g. 5 years"
-                  value={experience}
-                  onChange={(e) => setExperience(e.target.value)}
-                />
+                <Input id="experience" placeholder="e.g. 5 years" />
               </div>
 
               <div className="space-y-2">
@@ -212,12 +202,7 @@ const RegisterPage = () => {
                   </span>
                 </Label>
 
-                <Input
-                  id="location"
-                  placeholder="e.g. Dhanmondi, Dhaka"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
+                <Input id="location" placeholder="e.g. Dhanmondi, Dhaka" />
               </div>
 
               {/* Qualifications */}
