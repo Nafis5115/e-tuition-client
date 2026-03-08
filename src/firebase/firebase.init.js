@@ -6,12 +6,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB7EfzIWH_t0rWyJGidHMBFICLEjQK5XcM",
-  authDomain: "e-tuition-f8526.firebaseapp.com",
-  projectId: "e-tuition-f8526",
-  storageBucket: "e-tuition-f8526.firebasestorage.app",
-  messagingSenderId: "165064381189",
-  appId: "1:165064381189:web:b092d0077520d829251d6c",
+  apiKey: import.meta.vite.APIKEY,
+  authDomain: import.meta.vite.AUTHDOMAIN,
+  projectId: import.meta.vite.PROJECTID,
+  storageBucket: import.meta.vite.STORAGEBUCKET,
+  messagingSenderId: import.meta.vite.MESSAGINGSENDERID,
+  appId: import.meta.vite.APPID,
 };
 
 // Initialize Firebase
