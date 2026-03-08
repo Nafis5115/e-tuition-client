@@ -16,13 +16,16 @@ import {
   MapPin,
   Plus,
   X,
+  Loader2,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import useAuth from "../hooks/useAuth";
 
 const Register = () => {
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("Student");
   const [photoPreview, setPhotoPreview] = useState(null);
+  const { registerUser, loading } = useAuth();
   // const [qualifications, setQualifications] = useState([""]);
   // const [subjects, setSubjects] = useState([""]);
   const handlePhotoChange = (e) => {
@@ -48,6 +51,9 @@ const Register = () => {
   const handleOnSubmit = (data) => {
     data.role = role;
     console.log(data);
+    registerUser(data.email, data.password)
+      .then((result) => console.log(result.user))
+      .catch((e) => console.log(e));
   };
 
   return (
@@ -323,7 +329,11 @@ const Register = () => {
             )} */}
 
             <Button type="submit" className="w-full">
-              Create Account
+              {loading ? (
+                <Loader2 className="animate-spin w-6 h-6 text-white" />
+              ) : (
+                "Create Account"
+              )}
             </Button>
           </div>
         </form>
