@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, Navigate, useLocation, useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -8,10 +8,14 @@ import { GraduationCap, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const LoginPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location?.state?.from?.pathname || "/";
   const [showPass, setShowPass] = useState(false);
-  const { loginUser, loading, googleSignIn } = useAuth();
+  const { loginUser, loading, googleSignIn, user } = useAuth();
   const {
     register,
     formState: { errors },
@@ -24,6 +28,7 @@ const LoginPage = () => {
       .then((result) => {
         console.log(result.user);
         toast.success("Login Successful.");
+        navigate(from);
       })
       .catch((e) => {
         console.log(e);
@@ -36,10 +41,16 @@ const LoginPage = () => {
       .then((result) => {
         console.log(result.user);
         toast.success("Login Successful.");
+        navigate(from);
       })
       .catch((e) => console.log(e));
   };
 
+  if (loading) return <LoadingSpinner />;
+
+  if (user) {
+    return <Navigate to={from} replace />;
+  }
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-6">

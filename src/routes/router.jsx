@@ -27,6 +27,7 @@ import RevenueHistory from "../pages/dashboard/RevenueHistory";
 import TuitionManagement from "../pages/dashboard/TuitionManagement";
 import UserManagement from "../pages/dashboard/UserManagement";
 import DashboardLayout from "../components/DashboardLayout";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -71,7 +72,11 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        Component: DashboardLayout,
+        element: (
+          <PrivateRoute>
+            <DashboardLayout></DashboardLayout>
+          </PrivateRoute>
+        ),
         children: [
           {
             path: "",

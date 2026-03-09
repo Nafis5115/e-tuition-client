@@ -114,16 +114,43 @@ const Navbar = () => {
             </Link>
           ))}
           <div className="mt-3 flex flex-col gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/login" onClick={() => setMobileOpen(false)}>
-                Login
-              </Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link to="/register" onClick={() => setMobileOpen(false)}>
-                Register
-              </Link>
-            </Button>
+            {!loading ? (
+              user ? (
+                //
+                <>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                      <LayoutDashboard className="mr-1 h-4 w-4" /> Dashboard
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      logout();
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <LogOut className="mr-1 h-4 w-4" /> Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/login" onClick={() => setMobileOpen(false)}>
+                      Login
+                    </Link>
+                  </Button>
+                  <Button size="sm" asChild>
+                    <Link to="/register" onClick={() => setMobileOpen(false)}>
+                      Register
+                    </Link>
+                  </Button>
+                </>
+              )
+            ) : (
+              <Loader2 className="animate-spin w-6 h-6 text-primary" />
+            )}
           </div>
         </div>
       )}

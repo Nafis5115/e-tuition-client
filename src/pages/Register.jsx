@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, Navigate, useLocation, useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -21,12 +21,16 @@ import {
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Register = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location?.state?.from || "/";
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("Student");
   const [photoPreview, setPhotoPreview] = useState(null);
-  const { registerUser, loading } = useAuth();
+  const { registerUser, loading, user } = useAuth();
   // const [qualifications, setQualifications] = useState([""]);
   // const [subjects, setSubjects] = useState([""]);
   const handlePhotoChange = (e) => {
@@ -53,7 +57,11 @@ const Register = () => {
     data.role = role;
     console.log(data);
     registerUser(data.email, data.password)
-      .then((result) => console.log(result.user))
+      .then((result) => {
+        console.log(result.user);
+        toast.success("Registration Successful.");
+        navigate(from);
+      })
       .catch((e) => {
         console.log(e);
         if (e.code === "auth/email-already-in-use") {
@@ -61,6 +69,11 @@ const Register = () => {
         }
       });
   };
+  if (loading) return <LoadingSpinner />;
+
+  if (user) {
+    return <Navigate to={from} replace />;
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
