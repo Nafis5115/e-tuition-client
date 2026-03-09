@@ -1,12 +1,21 @@
-import { Toaster } from "./components/ui/toaster";
 import React from "react";
-import { Toaster as Sonner } from "./components/ui/sonner";
+
 import { TooltipProvider } from "./components/ui/tooltip";
+import { Toaster } from "react-hot-toast";
 
 const App = ({ children }) => (
   <TooltipProvider>
-    <Toaster />
-    <Sonner />
+    <Toaster
+      position="top-center"
+      reverseOrder={false}
+      toastOptions={{
+        className: "",
+        style: {
+          color: "white",
+          backgroundColor: "black",
+        },
+      }}
+    />
     {children}
   </TooltipProvider>
 );

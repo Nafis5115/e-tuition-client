@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [showPass, setShowPass] = useState(false);
@@ -53,7 +54,12 @@ const Register = () => {
     console.log(data);
     registerUser(data.email, data.password)
       .then((result) => console.log(result.user))
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log(e);
+        if (e.code === "auth/email-already-in-use") {
+          toast.error("Email already in use.");
+        }
+      });
   };
 
   return (

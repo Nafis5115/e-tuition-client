@@ -7,6 +7,7 @@ import { Label } from "../components/ui/label";
 import { GraduationCap, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const [showPass, setShowPass] = useState(false);
@@ -20,8 +21,14 @@ const LoginPage = () => {
   const handleOnSubmit = (data) => {
     console.log(data);
     loginUser(data.email, data.password)
-      .then((result) => console.log(result.user))
-      .catch((e) => console.log(e));
+      .then((result) => {
+        console.log(result.user);
+        toast.success("Login Successful.");
+      })
+      .catch((e) => {
+        console.log(e);
+        toast.error("Invalid Credential.");
+      });
   };
 
   return (
