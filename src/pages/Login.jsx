@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const [showPass, setShowPass] = useState(false);
-  const { loginUser, loading } = useAuth();
+  const { loginUser, loading, googleSignIn } = useAuth();
   const {
     register,
     formState: { errors },
@@ -29,6 +29,15 @@ const LoginPage = () => {
         console.log(e);
         toast.error("Invalid Credential.");
       });
+  };
+
+  const handleGoogleSignIn = () => {
+    googleSignIn()
+      .then((result) => {
+        console.log(result.user);
+        toast.success("Login Successful.");
+      })
+      .catch((e) => console.log(e));
   };
 
   return (
@@ -119,7 +128,12 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <Button type="button" variant="outline" className="w-full">
+            <Button
+              onClick={handleGoogleSignIn}
+              type="button"
+              variant="outline"
+              className="w-full"
+            >
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"

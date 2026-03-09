@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { AuthContext } from "./AuthContext";
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from "firebase/auth";
 import auth from "../firebase/firebase.init";
+
+const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
@@ -23,10 +27,18 @@ const AuthProvider = ({ children }) => {
     );
   };
 
+  const googleSignIn = async () => {
+    setLoading(true);
+    return signInWithPopup(auth, googleProvider).finally(() =>
+      setLoading(false),
+    );
+  };
+
   const authInfo = {
     registerUser,
     loading,
     loginUser,
+    googleSignIn,
   };
   return <AuthContext value={authInfo}>{children}</AuthContext>;
 };
