@@ -110,7 +110,7 @@ const LoginPage = () => {
                 </p>
               )}
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
                 <Loader2 className="animate-spin w-6 h-6 text-white" />
               ) : (

@@ -2,7 +2,17 @@ import React from "react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
-import { Menu, X, GraduationCap, User, LogIn } from "lucide-react";
+import {
+  Menu,
+  X,
+  GraduationCap,
+  User,
+  LogIn,
+  Loader2,
+  LayoutDashboard,
+  LogOut,
+} from "lucide-react";
+import useAuth from "../hooks/useAuth";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -15,6 +25,7 @@ const navLinks = [
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { user, logout, loading } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 glass-effect border-b">
@@ -41,18 +52,37 @@ const Navbar = () => {
             </Link>
           ))}
         </div>
-
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/login">
-              <LogIn className="mr-1 h-4 w-4" /> Login
-            </Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link to="/register">
-              <User className="mr-1 h-4 w-4" /> Register
-            </Link>
-          </Button>
+          {!loading ? (
+            user ? (
+              //
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/dashboard">
+                    <LayoutDashboard className="mr-1 h-4 w-4" /> Dashboard
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" onClick={logout}>
+                  <LogOut className="mr-1 h-4 w-4" /> Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/login">
+                    <LogIn className="mr-1 h-4 w-4" /> Login
+                  </Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link to="/register">
+                    <User className="mr-1 h-4 w-4" /> Register
+                  </Link>
+                </Button>
+              </>
+            )
+          ) : (
+            <Loader2 className="animate-spin w-6 h-6 text-primary" />
+          )}
         </div>
 
         <button
