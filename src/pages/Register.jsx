@@ -87,7 +87,7 @@ const Register = () => {
         role: role.toLowerCase(),
       };
 
-      axiosInstance
+      await axiosInstance
         .post("/api/create-user", newUser)
         .then(() => console.log("User saved to db"))
         .catch((e) => console.log(e));

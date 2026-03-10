@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner";
+import useAxios from "../hooks/useAxios";
 
 const LoginPage = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const LoginPage = () => {
   const from = location?.state?.from?.pathname || "/";
   const [showPass, setShowPass] = useState(false);
   const { loginUser, loading, googleSignIn, user } = useAuth();
+  const axiosInstance = useAxios();
   const {
     register,
     formState: { errors },
@@ -36,14 +38,24 @@ const LoginPage = () => {
       });
   };
 
-  const handleGoogleSignIn = () => {
-    googleSignIn()
-      .then((result) => {
-        console.log(result.user);
-        toast.success("Login Successful.");
-        navigate(from);
-      })
-      .catch((e) => console.log(e));
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await googleSignIn();
+      console.log(result.user);
+      const newUser = {
+        name: result.user.displayName,
+        email: result.user.email,
+      };
+      await axiosInstance
+        .post("/api/create-user", newUser)
+        .then(() => console.log("User saved to db"))
+        .catch((e) => console.log(e));
+
+      toast.success("Login Successful.");
+      navigate(from);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   if (loading) return <LoadingSpinner />;
