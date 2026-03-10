@@ -22,6 +22,8 @@ import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner";
+import axios from "axios";
+import useAxios from "../hooks/useAxios";
 
 const Register = () => {
   const location = useLocation();
@@ -30,7 +32,11 @@ const Register = () => {
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("Student");
   const [photoPreview, setPhotoPreview] = useState(null);
-  const { registerUser, loading, user } = useAuth();
+  const { registerUser, loading, user, updateUserProfile } = useAuth();
+  const [imageLoading, setImageLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const axiosInstance = useAxios();
+
   // const [qualifications, setQualifications] = useState([""]);
   // const [subjects, setSubjects] = useState([""]);
   const handlePhotoChange = (e) => {
@@ -53,25 +59,57 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
-  const handleOnSubmit = (data) => {
-    data.role = role;
-    console.log(data);
-    registerUser(data.email, data.password)
-      .then((result) => {
-        console.log(result.user);
-        toast.success("Registration Successful.");
-        navigate(from);
-      })
-      .catch((e) => {
-        console.log(e);
-        if (e.code === "auth/email-already-in-use") {
-          toast.error("Email already in use.");
-        }
-      });
-  };
-  if (loading) return <LoadingSpinner />;
+  const handleOnSubmit = async (data) => {
+    try {
+      setSubmitting(true);
+      setImageLoading(true);
+      const name = data.name;
+      const email = data.email;
+      const password = data.password;
+      const photo = data.photo[0];
 
-  if (user) {
+      const result = await registerUser(email, password);
+
+      const formData = new FormData();
+      formData.append("image", photo);
+      const imageApiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST_KEY}`;
+      const imageRes = await axios.post(imageApiUrl, formData);
+      const photoURL = imageRes.data.data.url;
+
+      await updateUserProfile({
+        displayName: name,
+        photoURL: photoURL,
+      });
+
+      const newUser = {
+        name: result.user.displayName,
+        email: result.user.email,
+        role: role.toLowerCase(),
+      };
+
+      axiosInstance
+        .post("/api/create-user", newUser)
+        .then(() => console.log("User saved to db"))
+        .catch((e) => console.log(e));
+
+      toast.success("Registration Successful.");
+      navigate(from);
+    } catch (e) {
+      console.log(e);
+
+      if (e.code === "auth/email-already-in-use") {
+        toast.error("Email already in use.");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setSubmitting(false);
+      setImageLoading(false);
+    }
+  };
+  if (loading || imageLoading) return <LoadingSpinner />;
+
+  if (user && !submitting) {
     return <Navigate to={from} replace />;
   }
 
@@ -112,11 +150,14 @@ const Register = () => {
                 </label>
 
                 <input
+                  {...register("photo", {
+                    required: true,
+                    onChange: (e) => handlePhotoChange(e),
+                  })}
                   id="profile-photo"
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handlePhotoChange}
                 />
               </div>
             </div>
@@ -124,6 +165,9 @@ const Register = () => {
             <p className="text-center text-xs text-muted-foreground">
               Upload profile photo
             </p>
+            {errors.photo?.type === "required" && (
+              <p className="text-red-500 text-sm">Image is required</p>
+            )}
 
             <div className="space-y-2">
               <Label>I am a</Label>
