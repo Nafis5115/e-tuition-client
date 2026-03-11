@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -11,27 +9,64 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
-import { toast } from "sonner";
+
 import { Plus, X } from "lucide-react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import useAxios from "../../hooks/useAxios";
+import useAuth from "../../hooks/useAuth";
 
 const PostTuition = () => {
-  const [formData, setFormData] = useState({
-    subject: "",
-    class: "",
-    location: "",
-    budget: "",
-    schedule: "",
-    description: "",
-    medium: "",
+  const { user } = useAuth();
+  const {
+    register,
+    control,
+    trigger,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      requirements: [{ value: "" }],
+    },
   });
 
-  const [requirements, setRequirements] = useState([""]);
+  const {
+    fields: requirements = [""],
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: "requirements",
+    rules: {
+      minLength: {
+        value: 1,
+        message: "At least one requirement is required",
+      },
+    },
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toast.success(
-      "Tuition post created successfully! Awaiting admin approval.",
-    );
+  const axiosInstance = useAxios();
+
+  const handleOnSubmit = (data) => {
+    try {
+      const formattedRequirements = data.requirements.map((r) => r.value);
+      const newTuition = {
+        userEmail: user?.email,
+        subject: data.subject,
+        class: data.class,
+        budget: Number(data.budget),
+        schedule: data.schedule,
+        medium: data.medium,
+        description: data.description,
+        requirements: formattedRequirements,
+      };
+      axiosInstance
+        .post("/api/create-tuition", newTuition)
+        .then((res) => console.log(res));
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -41,36 +76,50 @@ const PostTuition = () => {
         Create a tuition post to find the perfect tutor
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-6 max-w-2xl space-y-5">
+      <form
+        onSubmit={handleSubmit(handleOnSubmit)}
+        className="mt-6 max-w-2xl space-y-5"
+      >
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
             <Input
+              {...register("subject", { required: true })}
               id="subject"
               placeholder="e.g. Mathematics"
-              value={formData.subject}
-              onChange={(e) =>
-                setFormData({ ...formData, subject: e.target.value })
-              }
-              required
             />
+            {errors.subject?.type === "required" && (
+              <p className="text-red-500 text-sm">Subject is required</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="class">Class</Label>
-            <Select
-              onValueChange={(v) => setFormData({ ...formData, class: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select class" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <SelectItem key={i} value={`Class ${i + 1}`}>
-                    Class {i + 1}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="class"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  defaultValue=""
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <SelectItem key={i} value={`Class ${i + 1}`}>
+                        Class {i + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            ></Controller>
+            {errors.class?.type === "required" && (
+              <p className="text-red-500 text-sm">Class is required</p>
+            )}
           </div>
         </div>
 
@@ -78,26 +127,24 @@ const PostTuition = () => {
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
             <Input
+              {...register("location", { required: true })}
               id="location"
               placeholder="e.g. Dhanmondi, Dhaka"
-              value={formData.location}
-              onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
-              required
             />
+            {errors.location?.type === "required" && (
+              <p className="text-red-500 text-sm">Location is required</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="budget">Budget (Monthly)</Label>
             <Input
+              {...register("budget", { required: true })}
               id="budget"
               placeholder="e.g. ৳5,000"
-              value={formData.budget}
-              onChange={(e) =>
-                setFormData({ ...formData, budget: e.target.value })
-              }
-              required
             />
+            {errors.budget?.type === "required" && (
+              <p className="text-red-500 text-sm">Budget is required</p>
+            )}
           </div>
         </div>
 
@@ -105,56 +152,81 @@ const PostTuition = () => {
           <div className="space-y-2">
             <Label htmlFor="schedule">Schedule</Label>
             <Input
+              {...register("schedule", { required: true })}
               id="schedule"
               placeholder="e.g. Sun, Tue, Thu - 5PM"
-              value={formData.schedule}
-              onChange={(e) =>
-                setFormData({ ...formData, schedule: e.target.value })
-              }
-              required
             />
+            {errors.schedule?.type === "required" && (
+              <p className="text-red-500 text-sm">Schedule is required</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="medium">Medium</Label>
-            <Select
-              onValueChange={(v) => setFormData({ ...formData, medium: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select medium" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Bangla">Bangla Medium</SelectItem>
-                <SelectItem value="English">English Medium</SelectItem>
-                <SelectItem value="Madrasa">Madrasa</SelectItem>
-              </SelectContent>
-            </Select>
+            <Controller
+              name="medium"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  defaultValue=""
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select medium" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Bangla">Bangla Medium</SelectItem>
+                    <SelectItem value="English">English Medium</SelectItem>
+                    <SelectItem value="Madrasa">Madrasa</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            ></Controller>
+            {errors.medium?.type === "required" && (
+              <p className="text-red-500 text-sm">Medium is required</p>
+            )}
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
           <Textarea
+            {...register("description", { required: true })}
             id="description"
             placeholder="Add description..."
-            rows={4}
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
+            rows={1}
           />
+          {errors.description?.type === "required" && (
+            <p className="text-red-500 text-sm">Description is required</p>
+          )}
         </div>
         <div className="space-y-2">
-          <Label>Requirements</Label>
+          <Label>
+            Requirements <span>(Optional)</span>
+          </Label>
 
-          {requirements.map((q, i) => (
-            <div key={i} className="flex gap-2">
-              <Input
-                placeholder={`Requirement ${i + 1}`}
-                value={q}
-                onChange={(e) =>
-                  updateField(setRequirements, i, e.target.value)
-                }
-              />
+          {requirements.map((field, index) => (
+            <div key={field.id} className="flex gap-2 items-start">
+              <div className="flex-1">
+                <Input
+                  {...register(`requirements.${index}.value`, {
+                    validate: (value) =>
+                      value.trim() !== "" || "Requirement cannot be empty",
+                  })}
+                  onChange={(e) => {
+                    register(`requirements.${index}.value`).onChange(e);
+                    trigger("requirements");
+                  }}
+                  placeholder={`Requirement ${index + 1}`}
+                />
+
+                {errors.requirements?.[index]?.value && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.requirements[index].value.message}
+                  </p>
+                )}
+              </div>
 
               {requirements.length > 1 && (
                 <Button
@@ -162,7 +234,7 @@ const PostTuition = () => {
                   variant="ghost"
                   size="icon"
                   className="shrink-0"
-                  onClick={() => removeField(setRequirements, i)}
+                  onClick={() => remove(index)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -175,7 +247,7 @@ const PostTuition = () => {
             variant="outline"
             size="sm"
             className="w-full"
-            onClick={() => addField(setRequirements)}
+            onClick={() => append({ value: "" })}
           >
             <Plus className="mr-1 h-3.5 w-3.5" /> Add Requirement
           </Button>
@@ -190,13 +262,3 @@ const PostTuition = () => {
 };
 
 export default PostTuition;
-
-const addField = (setter) => {
-  setter((prev) => [...prev, ""]);
-};
-const removeField = (setter, index) => {
-  setter((prev) => prev.filter((_, i) => i !== index));
-};
-const updateField = (setter, index, value) => {
-  setter((prev) => prev.map((v, i) => (i === index ? value : v)));
-};
