@@ -15,6 +15,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAxios from "../../../hooks/useAxios";
 import useAuth from "../../../hooks/useAuth";
+import { useNavigate } from "react-router";
 
 const PostTuition = () => {
   const { user } = useAuth();
@@ -46,8 +47,9 @@ const PostTuition = () => {
   });
 
   const axiosInstance = useAxios();
+  const navigate = useNavigate();
 
-  const handleOnSubmit = (data) => {
+  const handleOnSubmit = async (data) => {
     try {
       const formattedRequirements = data.requirements.map((r) => r.value);
       const newTuition = {
@@ -60,12 +62,12 @@ const PostTuition = () => {
         description: data.description,
         requirements: formattedRequirements,
       };
-      axiosInstance
-        .post("/api/create-tuition", newTuition)
-        .then((res) => console.log(res));
+      await axiosInstance.post("/api/create-tuition", newTuition);
+      toast.success("Tuition Created Successful.");
+      navigate("/dashboard/my-tuitions");
     } catch (e) {
       console.log(e);
-      toast.error("Something went wrong");
+      toast.error("Something Went Wrong");
     }
   };
 
