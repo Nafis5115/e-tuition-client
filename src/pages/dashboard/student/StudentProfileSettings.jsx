@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
 import { Camera } from "lucide-react";
 import { toast } from "sonner";
 
-const ProfileSettings = ({ role = "student" }) => {
+const StudentProfileSettings = ({ role = "student" }) => {
   const [name, setName] = useState("Ahmed Rahman");
   const [phone, setPhone] = useState("+880 1712-345678");
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -99,4 +99,4 @@ const ProfileSettings = ({ role = "student" }) => {
   );
 };
 
-export default ProfileSettings;
+export default StudentProfileSettings;

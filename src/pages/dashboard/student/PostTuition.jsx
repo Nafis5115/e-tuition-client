@@ -1,20 +1,20 @@
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Textarea } from "../../components/ui/textarea";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { Textarea } from "../../../components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
+} from "../../../components/ui/select";
 
 import { Plus, X } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import useAxios from "../../hooks/useAxios";
-import useAuth from "../../hooks/useAuth";
+import useAxios from "../../../hooks/useAxios";
+import useAuth from "../../../hooks/useAuth";
 
 const PostTuition = () => {
   const { user } = useAuth();

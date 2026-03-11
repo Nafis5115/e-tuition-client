@@ -45,7 +45,7 @@ const tutorLinks = [
   },
   {
     name: "Profile Settings",
-    path: "/dashboard/profile-settings",
+    path: "/dashboard/tutor/profile-settings",
     icon: Settings,
   },
 ];
@@ -67,7 +67,7 @@ const adminLinks = [
     path: "/dashboard/admin/reports-analytics",
     icon: BarChart3,
   },
-  { name: "Settings", path: "/dashboard/admin/profile", icon: Settings },
+  // { name: "Settings", path: "/dashboard/admin/profile", icon: Settings },
 ];
 
 const DashboardLayout = () => {

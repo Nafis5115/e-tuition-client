@@ -1,5 +1,5 @@
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
+import { Button } from "../../../components/ui/button";
+import { Badge } from "../../../components/ui/badge";
 import {
   Edit,
   Trash2,
@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import useAuth from "../../hooks/useAuth";
-import useAxios from "../../hooks/useAxios";
-import { capitalizeFirstWord } from "../../lib/utils";
+import useAuth from "../../../hooks/useAuth";
+import useAxios from "../../../hooks/useAxios";
+import { capitalizeFirstWord } from "../../../lib/utils";
 
 const statusColor = {
   Approved:

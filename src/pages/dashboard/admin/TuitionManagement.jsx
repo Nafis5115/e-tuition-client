@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button } from "../../components/ui/button";
+import { Button } from "../../../components/ui/button";
 import { CheckCircle, XCircle, MapPin, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 

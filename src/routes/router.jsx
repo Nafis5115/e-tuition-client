@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import Layout from "../components/Layout";
+import Layout from "../layouts/Layout";
 
 import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
@@ -12,22 +12,23 @@ import TutorProfile from "../pages/TutorProfile";
 import AboutPage from "../pages/About";
 import ContactPage from "../pages/Contact";
 
-import StudentDashboard from "../pages/dashboard/StudentDashboard";
-import TutorDashboard from "../pages/dashboard/TutorDashboard";
-import AdminDashboard from "../pages/dashboard/AdminDashboard";
-import AppliedTutors from "../pages/dashboard/AppliedTutors";
-import MyApplications from "../pages/dashboard/MyApplications";
-import MyTuitions from "../pages/dashboard/MyTuitions";
-import OngoingTuitions from "../pages/dashboard/OngoingTuitions";
-import Payments from "../pages/dashboard/Payments";
-import PostTuition from "../pages/dashboard/PostTuition";
-import ProfileSettings from "../pages/dashboard/ProfileSettings";
-import ReportsAnalytics from "../pages/dashboard/ReportsAnalytics";
-import RevenueHistory from "../pages/dashboard/RevenueHistory";
-import TuitionManagement from "../pages/dashboard/TuitionManagement";
-import UserManagement from "../pages/dashboard/UserManagement";
-import DashboardLayout from "../components/DashboardLayout";
+import StudentDashboard from "../pages/dashboard/student/StudentDashboard";
+import TutorDashboard from "../pages/dashboard/tutor/TutorDashboard";
+import AdminDashboard from "../pages/dashboard/admin/AdminDashboard";
+import AppliedTutors from "../pages/dashboard/student/AppliedTutors";
+import MyApplications from "../pages/dashboard/tutor/MyApplications";
+import MyTuitions from "../pages/dashboard/student/MyTuitions";
+import OngoingTuitions from "../pages/dashboard/tutor/OngoingTuitions";
+import Payments from "../pages/dashboard/student/Payments";
+import PostTuition from "../pages/dashboard/student/PostTuition";
+import ReportsAnalytics from "../pages/dashboard/admin/ReportsAnalytics";
+import RevenueHistory from "../pages/dashboard/tutor/RevenueHistory";
+import TuitionManagement from "../pages/dashboard/admin/TuitionManagement";
+import UserManagement from "../pages/dashboard/admin/UserManagement";
+import DashboardLayout from "../layouts/DashboardLayout";
 import PrivateRoute from "./PrivateRoute";
+import StudentProfileSettings from "../pages/dashboard/student/StudentProfileSettings";
+import TutorProfileSettings from "../pages/dashboard/tutor/TutorProfileSettings";
 
 const router = createBrowserRouter([
   {
@@ -103,7 +104,7 @@ const router = createBrowserRouter([
 
           {
             path: "profile-settings",
-            Component: ProfileSettings,
+            Component: StudentProfileSettings,
           },
           {
             path: "tutor",
@@ -124,6 +125,10 @@ const router = createBrowserRouter([
               {
                 path: "revenue-history",
                 Component: RevenueHistory,
+              },
+              {
+                path: "profile-settings",
+                Component: TutorProfileSettings,
               },
             ],
           },
