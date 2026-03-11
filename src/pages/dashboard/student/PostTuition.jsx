@@ -59,6 +59,7 @@ const PostTuition = () => {
         budget: Number(data.budget),
         schedule: data.schedule,
         medium: data.medium,
+        location: data.location,
         description: data.description,
         requirements: formattedRequirements,
       };

@@ -1,6 +1,6 @@
 import { Button } from "../../../components/ui/button";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, BookOpen } from "lucide-react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
@@ -12,7 +12,7 @@ const MyTuitions = () => {
   const axiosInstance = useAxios();
 
   const { data: tuitions = [], isLoading } = useQuery({
-    queryKey: ["tuitions", user?.email],
+    queryKey: ["my-tuitions", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axiosInstance.get(
