@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import { toast } from "sonner";
+import { Plus, X } from "lucide-react";
 
 const PostTuition = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,8 @@ const PostTuition = () => {
     description: "",
     medium: "",
   });
+
+  const [requirements, setRequirements] = useState([""]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -129,16 +132,53 @@ const PostTuition = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Additional Details</Label>
+          <Label htmlFor="description">Description</Label>
           <Textarea
             id="description"
-            placeholder="Any specific requirements..."
+            placeholder="Add description..."
             rows={4}
             value={formData.description}
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
           />
+        </div>
+        <div className="space-y-2">
+          <Label>Requirements</Label>
+
+          {requirements.map((q, i) => (
+            <div key={i} className="flex gap-2">
+              <Input
+                placeholder={`Requirement ${i + 1}`}
+                value={q}
+                onChange={(e) =>
+                  updateField(setRequirements, i, e.target.value)
+                }
+              />
+
+              {requirements.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0"
+                  onClick={() => removeField(setRequirements, i)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => addField(setRequirements)}
+          >
+            <Plus className="mr-1 h-3.5 w-3.5" /> Add Requirement
+          </Button>
         </div>
 
         <Button type="submit" size="lg">
@@ -150,3 +190,13 @@ const PostTuition = () => {
 };
 
 export default PostTuition;
+
+const addField = (setter) => {
+  setter((prev) => [...prev, ""]);
+};
+const removeField = (setter, index) => {
+  setter((prev) => prev.filter((_, i) => i !== index));
+};
+const updateField = (setter, index, value) => {
+  setter((prev) => prev.map((v, i) => (i === index ? value : v)));
+};
