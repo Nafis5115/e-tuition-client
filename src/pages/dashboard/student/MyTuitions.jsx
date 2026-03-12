@@ -1,22 +1,23 @@
 import { Button } from "../../../components/ui/button";
 
-import { Loader2, BookOpen } from "lucide-react";
+import { Loader2, BookOpen, ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import useAxios from "../../../hooks/useAxios";
 import UserTuitionCard from "../../../components/cards/tuition/UserTuitionCard";
+import { useState } from "react";
 
 const MyTuitions = () => {
   const { user } = useAuth();
   const axiosInstance = useAxios();
-
-  const { data: tuitions = [], isLoading } = useQuery({
-    queryKey: ["my-tuitions", user?.email],
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useQuery({
+    queryKey: ["my-tuitions", user?.email, page],
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axiosInstance.get(
-        `/api/get-user-tuitions?email=${user?.email}`,
+        `/api/get-user-tuitions?email=${user?.email}&page=${page}&limit=6`,
       );
       return res.data;
     },
@@ -38,13 +39,13 @@ const MyTuitions = () => {
 
       {!isLoading ? (
         <div className="mt-6 space-y-4">
-          {tuitions.map((tuition) => (
+          {data.data?.map((tuition) => (
             <UserTuitionCard
               key={tuition._id}
               tuition={tuition}
             ></UserTuitionCard>
           ))}
-          {tuitions.length === 0 && (
+          {data.data?.length === 0 && (
             <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
               <BookOpen className="mx-auto h-10 w-10 text-muted-foreground" />
               <p className="mt-3 text-muted-foreground">
@@ -63,6 +64,34 @@ const MyTuitions = () => {
           <Loader2 className="animate-spin w-6 h-6 text-primary " />
         </div>
       )}
+      <div className="mt-8 flex items-center justify-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        {Array.from({ length: data?.totalPages }, (_, i) => (
+          <Button
+            key={i}
+            variant={page === i + 1 ? "default" : "outline"}
+            size="icon"
+            onClick={() => setPage(i + 1)}
+          >
+            {i + 1}
+          </Button>
+        ))}
+        <Button
+          variant="outline"
+          size="icon"
+          disabled={page === data?.totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };
