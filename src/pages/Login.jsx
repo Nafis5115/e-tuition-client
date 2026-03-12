@@ -41,7 +41,6 @@ const LoginPage = () => {
   const handleGoogleSignIn = async () => {
     try {
       const result = await googleSignIn();
-      console.log(result.user);
       const newUser = {
         name: result.user.displayName,
         email: result.user.email,

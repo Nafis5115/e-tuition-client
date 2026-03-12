@@ -4,19 +4,20 @@ import { Loader2, BookOpen, ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
-import useAxios from "../../../hooks/useAxios";
+
 import UserTuitionCard from "../../../components/cards/tuition/UserTuitionCard";
 import { useState } from "react";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const MyTuitions = () => {
   const { user } = useAuth();
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [page, setPage] = useState(1);
   const { data, isLoading } = useQuery({
     queryKey: ["my-tuitions", user?.email, page],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axiosInstance.get(
+      const res = await axiosSecure.get(
         `/api/get-user-tuitions?email=${user?.email}&page=${page}&limit=6`,
       );
       return res.data;
