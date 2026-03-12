@@ -55,7 +55,7 @@ const UserTuitionCard = ({ tuition }) => {
             {capitalizeFirstWord(tuition.status)}
           </span>
           <Button size="icon" variant="ghost" asChild>
-            <Link to={`/tuitions/${tuition._id}`}>
+            <Link to={`/tuition-details/${tuition._id}`}>
               <Eye className="h-4 w-4" />
             </Link>
           </Button>

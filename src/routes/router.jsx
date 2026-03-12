@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         Component: TuitionsPage,
       },
       {
-        path: "tuitions/:id",
+        path: "tuition-details/:id",
         Component: TuitionDetails,
       },
       {

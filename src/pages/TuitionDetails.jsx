@@ -8,29 +8,25 @@ import {
   BookOpen,
   ArrowLeft,
   Calendar,
+  Loader2,
 } from "lucide-react";
+import useAxios from "../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { capitalizeFirstWord, formatDateWithMonth } from "../lib/utils";
 
 const TuitionDetails = () => {
   const { id } = useParams();
+  const axiosInstance = useAxios();
+  const { data: tuition = {}, isLoading } = useQuery({
+    queryKey: ["tuition-details", id],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/api/tuition-details/${id}`);
+      return res.data;
+    },
+  });
 
-  const tuition = {
-    id,
-    subject: "Mathematics",
-    class: "Class 10",
-    location: "Dhanmondi, Dhaka",
-    budget: "৳5,000/month",
-    schedule: "Sat-Mon-Wed, 5:00 PM - 6:30 PM",
-    status: "Approved",
-    description:
-      "Looking for an experienced Mathematics tutor for Class 10 SSC preparation. The student needs help with algebra, geometry, and trigonometry. Must be available for in-person sessions.",
-    postedBy: "Ahmed Rahman",
-    postedDate: "March 1, 2026",
-    requirements: [
-      "Strong command over SSC Math syllabus",
-      "Minimum 2 years teaching experience",
-      "Must be available at student's home",
-    ],
-  };
+  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <div className="section-padding">
@@ -44,7 +40,7 @@ const TuitionDetails = () => {
 
         <div className="card-elevated rounded-xl border bg-card p-6 md:p-8">
           <div className="mb-4 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            {tuition.status}
+            {capitalizeFirstWord(tuition.status)}
           </div>
 
           <h1 className="text-2xl font-bold md:text-3xl">{tuition.subject}</h1>
@@ -57,14 +53,15 @@ const TuitionDetails = () => {
               <MapPin className="h-4 w-4 text-primary" /> {tuition.location}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <DollarSign className="h-4 w-4 text-primary" /> {tuition.budget}
+              <DollarSign className="h-4 w-4 text-primary" /> ৳{tuition.budget}{" "}
+              /month
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4 text-primary" /> {tuition.schedule}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 text-primary" /> Posted:{" "}
-              {tuition.postedDate}
+              {formatDateWithMonth(tuition.createdAt)}
             </div>
           </div>
 
@@ -78,7 +75,7 @@ const TuitionDetails = () => {
           <div className="mt-6">
             <h2 className="font-heading text-lg font-semibold">Requirements</h2>
             <ul className="mt-2 space-y-1.5">
-              {tuition.requirements.map((req, i) => (
+              {tuition.requirements?.map((req, i) => (
                 <li
                   key={i}
                   className="flex items-start gap-2 text-sm text-muted-foreground"
