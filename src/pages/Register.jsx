@@ -65,6 +65,7 @@ const Register = () => {
       setImageLoading(true);
       const name = data.name;
       const email = data.email;
+      const phone = data.phone;
       const password = data.password;
       const photo = data.photo[0];
 
@@ -84,6 +85,7 @@ const Register = () => {
       const newUser = {
         name: result.user.displayName,
         email: result.user.email,
+        phone: phone,
         role: role.toLowerCase(),
       };
 
@@ -240,7 +242,7 @@ const Register = () => {
                 <Input
                   {...register("phone", { required: true })}
                   id="phone"
-                  type="number"
+                  type="text"
                   placeholder="+880 1XXX-XXXXXX"
                   className="pl-10"
                 />

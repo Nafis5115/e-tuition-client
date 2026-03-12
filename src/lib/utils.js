@@ -16,3 +16,11 @@ export const formatDateWithMonth = (date) => {
     day: "numeric",
   });
 };
+
+export function nameAvatar(name) {
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
+}

@@ -3,15 +3,18 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Camera } from "lucide-react";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
+import useAuth from "../../../hooks/useAuth";
 
 const StudentProfileSettings = ({ role = "student" }) => {
-  const [name, setName] = useState("Ahmed Rahman");
+  const { user } = useAuth();
+  const [name, setName] = useState(user?.displayName);
   const [phone, setPhone] = useState("+880 1712-345678");
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(user?.photoURL);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
+    if (user?.photoURL) setPhotoPreview(user?.photoUrl);
     if (file) setPhotoPreview(URL.createObjectURL(file));
   };
 
@@ -29,17 +32,11 @@ const StudentProfileSettings = ({ role = "student" }) => {
         <div className="flex items-center gap-5">
           <div className="relative">
             <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-primary/10">
-              {photoPreview ? (
-                <img
-                  src={photoPreview}
-                  alt="Profile"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <span className="font-heading text-2xl font-bold text-primary">
-                  AR
-                </span>
-              )}
+              <img
+                src={photoPreview}
+                alt="Profile"
+                className="h-full w-full object-cover"
+              />
             </div>
             <label
               htmlFor="photo"
@@ -75,7 +72,7 @@ const StudentProfileSettings = ({ role = "student" }) => {
           <Input
             id="email"
             type="email"
-            value="ahmed@example.com"
+            value={user?.email}
             disabled
             className="opacity-60"
           />
