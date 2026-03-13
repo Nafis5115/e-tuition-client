@@ -12,22 +12,23 @@ const useAxiosSecure = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const requestInterceptor = instance.interceptors.request.use((config) => {
-      if (user?.accessToken) {
-        config.headers.Authorization = `Bearer ${user?.accessToken}`;
-      }
-      return config;
-    });
+    const requestInterceptor = instance.interceptors.request.use(
+      async (config) => {
+        const token = await user?.getIdToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+    );
 
     const responseInterceptor = instance.interceptors.response.use(
       (response) => {
         return response;
       },
       (error) => {
-        if (error.status === 401 || error.status === 403) {
-          logout().then(() => {
-            navigate("/login");
-          });
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          logout().then(() => navigate("/login"));
         }
         return Promise.reject(error);
       },
@@ -37,7 +38,7 @@ const useAxiosSecure = () => {
       instance.interceptors.request.eject(requestInterceptor);
       instance.interceptors.response.eject(responseInterceptor);
     };
-  }, []);
+  }, [user, logout, navigate]);
 
   return instance;
 };

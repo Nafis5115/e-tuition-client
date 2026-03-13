@@ -46,11 +46,8 @@ const AuthProvider = ({ children }) => {
     });
   };
 
-  const updateUserProfile = async (profile) => {
-    setLoading(true);
-    return updateProfile(auth.currentUser, profile).finally(() =>
-      setLoading(false),
-    );
+  const updateUserProfile = (profile) => {
+    return updateProfile(auth.currentUser, profile);
   };
 
   useEffect(() => {

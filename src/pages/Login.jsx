@@ -25,7 +25,6 @@ const LoginPage = () => {
   } = useForm();
 
   const handleOnSubmit = (data) => {
-    console.log(data);
     loginUser(data.email, data.password)
       .then((result) => {
         console.log(result.user);

@@ -1,27 +1,85 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
-import { Camera } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const StudentProfileSettings = ({ role = "student" }) => {
-  const { user } = useAuth();
+  const { user, updateUserProfile } = useAuth();
   const [name, setName] = useState(user?.displayName);
-  const [phone, setPhone] = useState("+880 1712-345678");
   const [photoPreview, setPhotoPreview] = useState(user?.photoURL);
+  const [phone, setPhone] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
+  const axiosSecure = useAxiosSecure();
+  const [loading, setLoading] = useState(false);
+
+  const { data: phoneData = {} } = useQuery({
+    queryKey: ["user-phone", user?.email],
+
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/api/get-user-phone?email=${user?.email}`,
+      );
+
+      return res.data;
+    },
+  });
 
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
-    if (user?.photoURL) setPhotoPreview(user?.photoUrl);
-    if (file) setPhotoPreview(URL.createObjectURL(file));
+
+    if (file) {
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    } else if (user?.photoURL) {
+      setPhotoPreview(user?.photoURL);
+    }
   };
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    toast.success("Profile updated successfully!");
+  const uploadImage = async (imageFile) => {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    const imageApiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST_KEY}`;
+    const res = await axios.post(imageApiUrl, formData);
+    return res.data.data.url;
   };
+
+  useEffect(() => {
+    if (phoneData?.phone) {
+      setPhone(phoneData.phone);
+    }
+  }, [phoneData]);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      let photoURL = user?.photoURL;
+      if (photoFile) {
+        photoURL = await uploadImage(photoFile);
+      }
+
+      await updateUserProfile({ displayName: name, photoURL: photoURL });
+      await axiosSecure.patch(`/api/update-user-profile`, {
+        name: name,
+        phone: phone,
+      });
+      toast.success("Profile updated successfully!");
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error("Something Went Wrong.");
+    }
+  };
+
+  if (loading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <div>
