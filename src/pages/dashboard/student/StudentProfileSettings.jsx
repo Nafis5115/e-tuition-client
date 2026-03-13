@@ -19,9 +19,9 @@ const StudentProfileSettings = ({ role = "student" }) => {
   const axiosSecure = useAxiosSecure();
   const [loading, setLoading] = useState(false);
 
-  const { data: phoneData = {} } = useQuery({
+  const { data: phoneData = {}, isLoading: phoneLoading } = useQuery({
     queryKey: ["user-phone", user?.email],
-
+    enabled: !!user?.email,
     queryFn: async () => {
       const res = await axiosSecure.get(
         `/api/get-user-phone?email=${user?.email}`,
@@ -69,6 +69,7 @@ const StudentProfileSettings = ({ role = "student" }) => {
       await axiosSecure.patch(`/api/update-user-profile`, {
         name: name,
         phone: phone,
+        email: user?.email,
       });
       toast.success("Profile updated successfully!");
       setLoading(false);
@@ -79,7 +80,7 @@ const StudentProfileSettings = ({ role = "student" }) => {
     }
   };
 
-  if (loading) return <LoadingSpinner></LoadingSpinner>;
+  if (loading || phoneLoading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <div>
