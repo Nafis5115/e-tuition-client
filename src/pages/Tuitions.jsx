@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router";
 import { Button } from "../components/ui/button";
@@ -18,50 +18,42 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-
-const allTuitions = Array.from({ length: 16 }, (_, i) => ({
-  id: i + 1,
-  subject: [
-    "Mathematics",
-    "Physics",
-    "English",
-    "Chemistry",
-    "Biology",
-    "Bangla",
-    "ICT",
-    "Economics",
-  ][i % 8],
-  class: `Class ${8 + (i % 5)}`,
-  location:
-    [
-      "Dhanmondi",
-      "Gulshan",
-      "Uttara",
-      "Mirpur",
-      "Banani",
-      "Mohammadpur",
-      "Lalmatia",
-      "Bashundhara",
-    ][i % 8] + ", Dhaka",
-  budget: `৳${4000 + (i % 4) * 500}/month`,
-  status: "Approved",
-  schedule: ["Sat-Mon-Wed", "Sun-Tue-Thu", "Daily", "Fri-Sat"][i % 4],
-}));
+import useAxios from "../hooks/useAxios";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const TuitionsPage = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const perPage = 8;
+  const [selectedClass, setSelectedClass] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [sort, setSort] = useState("");
+  const axiosInstance = useAxios();
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: [
+      "all-approved-user-tuitions",
+      page,
+      debouncedSearch,
+      sort,
+      selectedClass,
+    ],
+    queryFn: async () => {
+      const res = await axiosInstance.get(
+        `/api/all-tuitions?page=${page}&limit=8&class=${selectedClass}&sort=${sort}&search=${debouncedSearch}`,
+      );
+      return res.data;
+    },
+    placeholderData: keepPreviousData,
+  });
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
 
-  const filtered = allTuitions.filter(
-    (t) =>
-      t.subject.toLowerCase().includes(search.toLowerCase()) ||
-      t.location.toLowerCase().includes(search.toLowerCase()),
-  );
+    return () => clearTimeout(timer);
+  }, [search]);
 
-  const totalPages = Math.ceil(filtered.length / perPage);
-  const paginated = filtered.slice((page - 1) * perPage, page * perPage);
-
+  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="section-padding">
       <div className="container mx-auto">
@@ -83,20 +75,20 @@ const TuitionsPage = () => {
               className="pl-10"
             />
           </div>
-          <Select>
+          <Select onValueChange={(val) => setSelectedClass(val)}>
             <SelectTrigger className="w-[160px]">
               <Filter className="mr-1 h-4 w-4" />
               <SelectValue placeholder="Class" />
             </SelectTrigger>
             <SelectContent>
               {[8, 9, 10, 11, 12].map((c) => (
-                <SelectItem key={c} value={`${c}`}>
+                <SelectItem key={c} value={`Class ${c}`}>
                   Class {c}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Select>
+          <Select onValueChange={(val) => setSort(val)}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -109,9 +101,9 @@ const TuitionsPage = () => {
         </div>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {paginated.map((t) => (
+          {data.tuitions.map((t) => (
             <div
-              key={t.id}
+              key={t._id}
               className="card-elevated rounded-xl border bg-card p-5"
             >
               <div className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
@@ -140,8 +132,12 @@ const TuitionsPage = () => {
             </div>
           ))}
         </div>
-
-        {totalPages > 1 && (
+        {isFetching && (
+          <div className="flex justify-center mt-4">
+            <LoadingSpinner />
+          </div>
+        )}
+        {data.totalPages > 1 && (
           <div className="mt-8 flex items-center justify-center gap-2">
             <Button
               variant="outline"
@@ -151,7 +147,7 @@ const TuitionsPage = () => {
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            {Array.from({ length: totalPages }, (_, i) => (
+            {Array.from({ length: data.totalPages }, (_, i) => (
               <Button
                 key={i}
                 variant={page === i + 1 ? "default" : "outline"}
@@ -164,7 +160,7 @@ const TuitionsPage = () => {
             <Button
               variant="outline"
               size="icon"
-              disabled={page === totalPages}
+              disabled={page === data.totalPages}
               onClick={() => setPage(page + 1)}
             >
               <ChevronRight className="h-4 w-4" />
