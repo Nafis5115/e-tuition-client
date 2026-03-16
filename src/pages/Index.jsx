@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
@@ -110,6 +110,7 @@ const features = [
 const HomePage = () => {
   const axiosInstance = useAxios();
   const location = useLocation();
+  const [openDialog, setOpenDialog] = useState(false);
   const { data: tuitions = [], isLoading } = useQuery({
     queryKey: ["index-tuitions"],
     queryFn: async () => {
@@ -159,7 +160,7 @@ const HomePage = () => {
                   Browse Tuitions <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
-              <Dialog>
+              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <DialogTrigger asChild>
                   <Button
                     size="lg"
@@ -170,7 +171,7 @@ const HomePage = () => {
                   </Button>
                 </DialogTrigger>
 
-                <BecomeTutorModal />
+                <BecomeTutorModal setOpenDialog={setOpenDialog} />
               </Dialog>
             </motion.div>
             <motion.div

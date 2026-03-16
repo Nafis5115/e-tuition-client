@@ -4,16 +4,22 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogClose,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { Link } from "react-router";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
-import { MapPin, Plus, X } from "lucide-react";
+import { CheckCircle, MapPin, Plus, X } from "lucide-react";
 import { Label } from "../ui/label";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import useAuth from "../../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 
-const BecomeTutorModal = () => {
+const BecomeTutorModal = ({ setOpenDialog }) => {
+  const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -44,13 +50,67 @@ const BecomeTutorModal = () => {
     name: "qualifications",
   });
 
-  const handleOnSubmit = (data) => {
-    const formattedQualifications = data.qualifications.map((r) => r.value);
-    const formattedSubjects = data.subjects.map((r) => r.value);
-    data.qualifications = formattedQualifications;
-    data.subjects = formattedSubjects;
-    console.log(data);
+  const { data: tutorStatus = {} } = useQuery({
+    queryKey: ["tutor-application-status", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/api/tutor-application-status?email=${user?.email}`,
+      );
+      return res.data;
+    },
+  });
+
+  const handleOnSubmit = async (data) => {
+    try {
+      const formattedQualifications = data.qualifications.map((r) => r.value);
+      const formattedSubjects = data.subjects.map((r) => r.value);
+
+      const newTutorProfile = {
+        email: user?.email,
+        name: user?.displayName,
+        about: data.about,
+        experience: data.experience,
+        location: data.location,
+        qualifications: formattedQualifications,
+        subjects: formattedSubjects,
+      };
+
+      await axiosSecure.post("/api/create-tutorProfile", newTutorProfile);
+      toast.success("Your application submitted successfully.");
+      setOpenDialog(false);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong.");
+    }
   };
+
+  if (tutorStatus.status === "pending") {
+    return (
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle></DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        <div className="flex  items-center justify-center px-4 py-12">
+          <div className="w-full max-w-md text-center space-y-6">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+              <CheckCircle className="h-10 w-10 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold">Application Submitted!</h1>
+            <p className="text-muted-foreground">
+              Your tutor application has been submitted successfully. Our team
+              will review your profile and get back to you shortly.
+            </p>
+
+            <DialogClose asChild>
+              <Button className="w-full mt-4">Back to Home</Button>
+            </DialogClose>
+          </div>
+        </div>
+      </DialogContent>
+    );
+  }
   return (
     <DialogContent className="max-h-[90vh] overflow-y-auto">
       <DialogHeader>
