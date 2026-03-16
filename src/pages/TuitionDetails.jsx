@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
 import {
   MapPin,
@@ -13,11 +13,13 @@ import {
 import useAxios from "../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { capitalizeFirstWord, formatDateWithMonth } from "../lib/utils";
+import { formatDateWithMonth } from "../lib/utils";
 
 const TuitionDetails = () => {
   const { id } = useParams();
   const axiosInstance = useAxios();
+  const location = useLocation();
+  const from = location.state?.from;
   const { data: tuition = {}, isLoading } = useQuery({
     queryKey: ["tuition-details", id],
     queryFn: async () => {
@@ -32,17 +34,13 @@ const TuitionDetails = () => {
     <div className="section-padding">
       <div className="container mx-auto max-w-3xl">
         <Link
-          to="/tuitions"
+          to={from}
           className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" /> Back to Tuitions
+          <ArrowLeft className="h-4 w-4" /> Back
         </Link>
 
         <div className="card-elevated rounded-xl border bg-card p-6 md:p-8">
-          <div className="mb-4 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            {capitalizeFirstWord(tuition.status)}
-          </div>
-
           <h1 className="text-2xl font-bold md:text-3xl">{tuition.subject}</h1>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">

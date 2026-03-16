@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import {
   Edit,
   Trash2,
@@ -22,6 +22,7 @@ const statusColor = {
 };
 
 const UserTuitionCard = ({ tuition }) => {
+  const location = useLocation();
   return (
     <div className="card-elevated rounded-xl border bg-card p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -55,7 +56,10 @@ const UserTuitionCard = ({ tuition }) => {
             {capitalizeFirstWord(tuition.status)}
           </span>
           <Button size="icon" variant="ghost" asChild>
-            <Link to={`/tuition-details/${tuition._id}`}>
+            <Link
+              to={`/tuition-details/${tuition._id}`}
+              state={{ from: location.pathname }}
+            >
               <Eye className="h-4 w-4" />
             </Link>
           </Button>

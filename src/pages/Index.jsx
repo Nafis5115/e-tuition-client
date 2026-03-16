@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
 import {
   Search,
@@ -15,6 +15,9 @@ import {
   DollarSign,
 } from "lucide-react";
 import heroImg from "../assets/hero-illustration.png";
+import useAxios from "../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -24,41 +27,6 @@ const fadeUp = {
     transition: { delay: i * 0.15, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
   }),
 };
-
-const sampleTuitions = [
-  {
-    id: 1,
-    subject: "Mathematics",
-    class: "Class 10",
-    location: "Dhanmondi, Dhaka",
-    budget: "৳5,000/month",
-    status: "Approved",
-  },
-  {
-    id: 2,
-    subject: "Physics",
-    class: "Class 12",
-    location: "Gulshan, Dhaka",
-    budget: "৳6,000/month",
-    status: "Approved",
-  },
-  {
-    id: 3,
-    subject: "English",
-    class: "Class 8",
-    location: "Uttara, Dhaka",
-    budget: "৳4,000/month",
-    status: "Approved",
-  },
-  {
-    id: 4,
-    subject: "Chemistry",
-    class: "Class 11",
-    location: "Mirpur, Dhaka",
-    budget: "৳5,500/month",
-    status: "Approved",
-  },
-];
 
 const sampleTutors = [
   {
@@ -137,6 +105,16 @@ const features = [
 ];
 
 const HomePage = () => {
+  const axiosInstance = useAxios();
+  const location = useLocation();
+  const { data: tuitions = [], isLoading } = useQuery({
+    queryKey: ["index-tuitions"],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/api/all-tuitions?limit=8`);
+      return res.data.tuitions;
+    },
+  });
+  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
       <section className="hero-gradient relative overflow-hidden">
@@ -237,22 +215,21 @@ const HomePage = () => {
           </motion.div>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {sampleTuitions.map((t, i) => (
+            {tuitions.map((t, i) => (
               <motion.div
-                key={t.id}
+                key={t._id}
                 className="card-elevated rounded-xl border bg-card p-5"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
               >
-                <div className="mb-3 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                  {t.status}
-                </div>
                 <h3 className="font-heading text-lg font-semibold">
                   {t.subject}
                 </h3>
-                <p className="text-sm text-muted-foreground">{t.class}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t.class} • {t.schedule}
+                </p>
                 <div className="mt-3 flex items-center gap-1 text-sm text-muted-foreground">
                   <MapPin className="h-3.5 w-3.5" /> {t.location}
                 </div>
@@ -265,7 +242,12 @@ const HomePage = () => {
                   variant="outline"
                   asChild
                 >
-                  <Link to={`/tuitions/${t.id}`}>View Details</Link>
+                  <Link
+                    to={`/tuition-details/${t._id}`}
+                    state={{ from: location }}
+                  >
+                    View Details
+                  </Link>
                 </Button>
               </motion.div>
             ))}

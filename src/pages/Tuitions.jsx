@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import {
@@ -25,6 +25,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 const TuitionsPage = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const location = useLocation();
   const [selectedClass, setSelectedClass] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [sort, setSort] = useState("");
@@ -106,9 +107,6 @@ const TuitionsPage = () => {
               key={t._id}
               className="card-elevated rounded-xl border bg-card p-5"
             >
-              <div className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                {t.status}
-              </div>
               <h3 className="font-heading text-lg font-semibold">
                 {t.subject}
               </h3>
@@ -127,7 +125,12 @@ const TuitionsPage = () => {
                 variant="outline"
                 asChild
               >
-                <Link to={`/tuitions/${t.id}`}>View Details</Link>
+                <Link
+                  to={`/tuition-details/${t._id}`}
+                  state={{ from: location.pathname }}
+                >
+                  View Details
+                </Link>
               </Button>
             </div>
           ))}
