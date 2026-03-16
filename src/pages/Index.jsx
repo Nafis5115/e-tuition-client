@@ -14,10 +14,13 @@ import {
   MapPin,
   DollarSign,
 } from "lucide-react";
+
 import heroImg from "../assets/hero-illustration.png";
 import useAxios from "../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { Dialog, DialogTrigger } from "../components/ui/dialog";
+import BecomeTutorModal from "../components/modals/BecomeTutorModal";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -156,14 +159,19 @@ const HomePage = () => {
                   Browse Tuitions <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
-                asChild
-              >
-                <Link to="/register">Become a Tutor</Link>
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
+                  >
+                    Become a Tutor
+                  </Button>
+                </DialogTrigger>
+
+                <BecomeTutorModal />
+              </Dialog>
             </motion.div>
             <motion.div
               custom={3}
