@@ -118,7 +118,7 @@ const HomePage = () => {
   return (
     <div>
       <section className="hero-gradient relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(168_80%_36%/0.3),transparent_50%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_30%_50%,hsl(168_80%_36%/0.3),transparent_50%)]" />
         <div className="container mx-auto flex flex-col-reverse items-center gap-8 px-4 py-16 md:flex-row md:py-24 lg:py-32">
           <motion.div
             className="flex-1 space-y-6 text-center md:text-left"

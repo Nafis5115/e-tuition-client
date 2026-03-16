@@ -1,45 +1,115 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
-import { Camera } from "lucide-react";
-import { toast } from "sonner";
+import { Camera, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useForm } from "react-hook-form";
 
 const TutorProfileSettings = ({ role = "student" }) => {
-  const [name, setName] = useState("Ahmed Rahman");
-  const [phone, setPhone] = useState("+880 1712-345678");
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const { user, updateUserProfile } = useAuth();
+  const [photoPreview, setPhotoPreview] = useState(user?.photoURL);
+  const [phoneError, setPhoneError] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
+  const axiosSecure = useAxiosSecure();
+  const [loading, setLoading] = useState(false);
 
+  const { data: phoneData = {}, isLoading: phoneLoading } = useQuery({
+    queryKey: ["user-phone", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/api/get-user-phone?email=${user?.email}`,
+      );
+
+      return res.data;
+    },
+  });
+  const { register, handleSubmit, watch, reset } = useForm({
+    defaultValues: {
+      name: user?.displayName,
+    },
+  });
+  const name = watch("name");
+
+  useEffect(() => {
+    if (phoneData?.phone) {
+      reset({
+        phone: phoneData.phone,
+      });
+    }
+  }, [phoneData?.phone, reset]);
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) setPhotoPreview(URL.createObjectURL(file));
+
+    if (file) {
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    } else if (user?.photoURL) {
+      setPhotoPreview(user?.photoURL);
+    }
   };
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    toast.success("Profile updated successfully!");
+  const uploadImage = async (imageFile) => {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    const imageApiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST_KEY}`;
+    const res = await axios.post(imageApiUrl, formData);
+    return res.data.data.url;
   };
+
+  const handleSave = async (data) => {
+    if (!data.phone || data.phone.trim() === "") {
+      setPhoneError("Phone number is required!");
+      return;
+    }
+    setPhoneError("");
+    try {
+      setLoading(true);
+      let photoURL = user?.photoURL;
+      if (photoFile) {
+        photoURL = await uploadImage(photoFile);
+      }
+
+      await updateUserProfile({ displayName: data.name, photoURL: photoURL });
+      await axiosSecure.patch(`/api/update-user-profile`, {
+        name: data.name,
+        phone: data.phone,
+        email: user?.email,
+      });
+      toast.success("Profile updated successfully!");
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error("Something Went Wrong.");
+    }
+  };
+
+  if (loading || phoneLoading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <div>
       <h1 className="text-2xl font-bold">Profile Settings</h1>
       <p className="text-muted-foreground">Update your personal information</p>
 
-      <form onSubmit={handleSave} className="mt-6 max-w-lg space-y-6">
+      <form
+        onSubmit={handleSubmit(handleSave)}
+        className="mt-6 max-w-lg space-y-6"
+      >
         <div className="flex items-center gap-5">
           <div className="relative">
             <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-primary/10">
-              {photoPreview ? (
-                <img
-                  src={photoPreview}
-                  alt="Profile"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <span className="font-heading text-2xl font-bold text-primary">
-                  AR
-                </span>
-              )}
+              <img
+                src={photoPreview}
+                alt="Profile"
+                className="h-full w-full object-cover"
+              />
             </div>
             <label
               htmlFor="photo"
@@ -63,11 +133,7 @@ const TutorProfileSettings = ({ role = "student" }) => {
 
         <div className="space-y-2">
           <Label htmlFor="fullName">Full Name</Label>
-          <Input
-            id="fullName"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <Input id="fullName" {...register("name")} />
         </div>
 
         <div className="space-y-2">
@@ -75,7 +141,7 @@ const TutorProfileSettings = ({ role = "student" }) => {
           <Input
             id="email"
             type="email"
-            value="ahmed@example.com"
+            value={user?.email}
             disabled
             className="opacity-60"
           />
@@ -86,11 +152,8 @@ const TutorProfileSettings = ({ role = "student" }) => {
 
         <div className="space-y-2">
           <Label htmlFor="phoneNum">Phone</Label>
-          <Input
-            id="phoneNum"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
+          <Input id="phoneNum" {...register("phone")} />
+          <p className="text-red-500 text-sm">{phoneError}</p>
         </div>
 
         <Button type="submit">Save Changes</Button>

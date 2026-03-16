@@ -30,7 +30,6 @@ const Register = () => {
   const navigate = useNavigate();
   const from = location?.state?.from || "/";
   const [showPass, setShowPass] = useState(false);
-  const [role, setRole] = useState("Student");
   const [photoPreview, setPhotoPreview] = useState(null);
   const { registerUser, loading, user, updateUserProfile } = useAuth();
   const [imageLoading, setImageLoading] = useState(false);
@@ -86,7 +85,6 @@ const Register = () => {
         name: result.user.displayName,
         email: result.user.email,
         phone: phone,
-        role: role.toLowerCase(),
       };
 
       await axiosInstance
@@ -170,27 +168,6 @@ const Register = () => {
             {errors.photo?.type === "required" && (
               <p className="text-red-500 text-sm">Image is required</p>
             )}
-
-            <div className="space-y-2">
-              <Label>I am a</Label>
-
-              <div className="grid grid-cols-2 gap-2">
-                {["Student", "Tutor"].map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setRole(r)}
-                    className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
-                      role === r
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/50"
-                    }`}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
