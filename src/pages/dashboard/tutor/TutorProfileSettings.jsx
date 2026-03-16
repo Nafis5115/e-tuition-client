@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
-import { Camera, Loader2 } from "lucide-react";
+import { Camera, Loader2, MapPin, Plus, X } from "lucide-react";
 import toast from "react-hot-toast";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
+import { Textarea } from "../../../components/ui/textarea";
 
 const TutorProfileSettings = ({ role = "student" }) => {
   const { user, updateUserProfile } = useAuth();
@@ -30,20 +31,64 @@ const TutorProfileSettings = ({ role = "student" }) => {
       return res.data;
     },
   });
-  const { register, handleSubmit, watch, reset } = useForm({
+
+  const { data: tutor = {} } = useQuery({
+    queryKey: ["tutor-details", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/api/tutor-details?email=${user?.email}`,
+      );
+      return res.data;
+    },
+  });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    control,
+    trigger,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       name: user?.displayName,
     },
   });
   const name = watch("name");
+  const {
+    fields: subjects = [""],
+    append: appendSubject,
+    remove: removeSubject,
+  } = useFieldArray({
+    control,
+    name: "subjects",
+  });
 
+  const {
+    fields: qualifications = [""],
+    append: appendQualification,
+    remove: removeQualification,
+  } = useFieldArray({
+    control,
+    name: "qualifications",
+  });
   useEffect(() => {
-    if (phoneData?.phone) {
-      reset({
-        phone: phoneData.phone,
-      });
-    }
-  }, [phoneData?.phone, reset]);
+    if (!tutor || Object.keys(tutor).length === 0) return;
+
+    reset({
+      name: user?.displayName || "",
+      phone: phoneData?.phone || "",
+      about: tutor?.about || "",
+      experience: tutor?.experience || "",
+      location: tutor?.location || "",
+      qualifications: tutor?.qualifications?.map((q) => ({ value: q })) || [
+        { value: "" },
+      ],
+      subjects: tutor?.subjects?.map((s) => ({ value: s })) || [{ value: "" }],
+    });
+  }, [tutor, phoneData?.phone]);
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
 
@@ -63,7 +108,7 @@ const TutorProfileSettings = ({ role = "student" }) => {
     return res.data.data.url;
   };
 
-  const handleSave = async (data) => {
+  const handleOnSubmit = async (data) => {
     if (!data.phone || data.phone.trim() === "") {
       setPhoneError("Phone number is required!");
       return;
@@ -71,6 +116,8 @@ const TutorProfileSettings = ({ role = "student" }) => {
     setPhoneError("");
     try {
       setLoading(true);
+      const formattedQualifications = data.qualifications.map((r) => r.value);
+      const formattedSubjects = data.subjects.map((r) => r.value);
       let photoURL = user?.photoURL;
       if (photoFile) {
         photoURL = await uploadImage(photoFile);
@@ -81,6 +128,14 @@ const TutorProfileSettings = ({ role = "student" }) => {
         name: data.name,
         phone: data.phone,
         email: user?.email,
+      });
+      await axiosSecure.patch(`/api/update-tutorProfile?email=${user?.email}`, {
+        name: data.name,
+        about: data.about,
+        experience: data.experience,
+        location: data.location,
+        qualifications: formattedQualifications,
+        subjects: formattedSubjects,
       });
       toast.success("Profile updated successfully!");
       setLoading(false);
@@ -99,7 +154,7 @@ const TutorProfileSettings = ({ role = "student" }) => {
       <p className="text-muted-foreground">Update your personal information</p>
 
       <form
-        onSubmit={handleSubmit(handleSave)}
+        onSubmit={handleSubmit(handleOnSubmit)}
         className="mt-6 max-w-lg space-y-6"
       >
         <div className="flex items-center gap-5">
@@ -154,6 +209,146 @@ const TutorProfileSettings = ({ role = "student" }) => {
           <Label htmlFor="phoneNum">Phone</Label>
           <Input id="phoneNum" {...register("phone")} />
           <p className="text-red-500 text-sm">{phoneError}</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="about">About</Label>
+          <Textarea
+            {...register("about", { required: true })}
+            id="about"
+            placeholder="Tell us about yourself..."
+            className="min-h-[80px]"
+          />
+          {errors.about?.type === "required" && (
+            <p className="text-red-500 text-sm">About is required</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="experience">Experience</Label>
+          <Input
+            type="number"
+            {...register("experience", { required: true })}
+            id="experience"
+            placeholder="e.g. 5 years"
+          />
+          {errors.about?.type === "required" && (
+            <p className="text-red-500 text-sm">Experience is required</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="location">
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5" /> Location
+            </span>
+          </Label>
+
+          <Input
+            {...register("location", { required: true })}
+            id="location"
+            placeholder="e.g. Dhanmondi, Dhaka"
+          />
+          {errors.about?.type === "required" && (
+            <p className="text-red-500 text-sm">Location is required</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Qualifications</Label>
+
+          {qualifications.map((q, i) => (
+            <div key={i} className="flex gap-2">
+              <div className="flex-1">
+                <Input
+                  {...register(`qualifications.${i}.value`, {
+                    validate: (value) =>
+                      value.trim() !== "" || "Qualification cannot be empty",
+                  })}
+                  onChange={(e) => {
+                    register(`qualifications.${i}.value`).onChange(e);
+                    trigger("qualifications");
+                  }}
+                  placeholder={`Qualification ${i + 1}`}
+                />
+                {errors.qualifications?.[i]?.value && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.qualifications[i].value.message}
+                  </p>
+                )}
+              </div>
+              {qualifications.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0"
+                  onClick={() => removeQualification(i)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => appendQualification({ value: "" })}
+          >
+            <Plus className="mr-1 h-3.5 w-3.5" /> Add Qualification
+          </Button>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Subjects</Label>
+
+          {subjects.map((s, i) => (
+            <div key={i} className="flex gap-2">
+              <div className="flex-1">
+                <Input
+                  {...register(`subjects.${i}.value`, {
+                    validate: (value) =>
+                      value.trim() !== "" || "Subject cannot be empty",
+                  })}
+                  onChange={(e) => {
+                    register(`subjects.${i}.value`).onChange(e);
+                    trigger("subjects");
+                  }}
+                  placeholder={`Subject ${i + 1}`}
+                />
+                {errors.subjects?.[i]?.value && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.subjects[i].value.message}
+                  </p>
+                )}
+              </div>
+
+              {subjects.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0"
+                  onClick={() => removeSubject(i)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => appendSubject({ value: "" })}
+          >
+            <Plus className="mr-1 h-3.5 w-3.5" /> Add Subject
+          </Button>
         </div>
 
         <Button type="submit">Save Changes</Button>

@@ -173,7 +173,7 @@ const BecomeTutorModal = ({ setOpenDialog }) => {
                   <Input
                     {...register(`qualifications.${i}.value`, {
                       validate: (value) =>
-                        value.trim() !== "" || "Requirement cannot be empty",
+                        value.trim() !== "" || "Qualification cannot be empty",
                     })}
                     onChange={(e) => {
                       register(`qualifications.${i}.value`).onChange(e);
@@ -221,7 +221,7 @@ const BecomeTutorModal = ({ setOpenDialog }) => {
                   <Input
                     {...register(`subjects.${i}.value`, {
                       validate: (value) =>
-                        value.trim() !== "" || "Requirement cannot be empty",
+                        value.trim() !== "" || "Subject cannot be empty",
                     })}
                     onChange={(e) => {
                       register(`subjects.${i}.value`).onChange(e);
