@@ -13,9 +13,9 @@ import {
 import { Plus, X } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import useAxios from "../../../hooks/useAxios";
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const PostTuition = () => {
   const { user } = useAuth();
@@ -46,7 +46,7 @@ const PostTuition = () => {
     },
   });
 
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
   const handleOnSubmit = async (data) => {
@@ -63,7 +63,7 @@ const PostTuition = () => {
         description: data.description,
         requirements: formattedRequirements,
       };
-      await axiosInstance.post("/api/create-tuition", newTuition);
+      await axiosSecure.post("/api/create-tuition", newTuition);
       toast.success("Tuition Created Successful.");
       navigate("/dashboard/my-tuitions");
     } catch (e) {

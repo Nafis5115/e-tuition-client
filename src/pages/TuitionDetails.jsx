@@ -23,7 +23,7 @@ import useRole from "../hooks/useRole";
 
 const TuitionDetails = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
   const location = useLocation();
@@ -68,7 +68,6 @@ const TuitionDetails = () => {
   };
 
   if (tuitionLoading) return <LoadingSpinner></LoadingSpinner>;
-
   return (
     <div className="section-padding">
       <div className="container mx-auto max-w-3xl">
@@ -123,36 +122,38 @@ const TuitionDetails = () => {
               ))}
             </ul>
           </div>
-          {role === "tutor" ? (
-            !user?.email || checkAppliedLoading ? (
-              <Button className="mt-8 w-full" size="lg" disabled>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Checking...
-              </Button>
-            ) : alreadyApplied?.applied ? (
-              <Button variant="danger" className="mt-8 w-full" size="lg">
-                Already Applied
-              </Button>
-            ) : (
-              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogTrigger asChild>
-                  <Button className="mt-8 w-full" size="lg">
-                    Apply as Tutor
-                  </Button>
-                </DialogTrigger>
+          {!loading &&
+            user?.email !== tuition.userEmail &&
+            (role === "tutor" ? (
+              !user?.email || checkAppliedLoading ? (
+                <Button className="mt-8 w-full" size="lg" disabled>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Checking...
+                </Button>
+              ) : alreadyApplied?.applied ? (
+                <Button variant="danger" className="mt-8 w-full" size="lg">
+                  Already Applied
+                </Button>
+              ) : (
+                <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                  <DialogTrigger asChild>
+                    <Button className="mt-8 w-full" size="lg">
+                      Apply as Tutor
+                    </Button>
+                  </DialogTrigger>
 
-                <TuitionApplyModal handleApply={handleApply} />
-              </Dialog>
-            )
-          ) : (
-            <Button
-              variant="destructive"
-              className="mt-8 w-full cursor-auto"
-              size="lg"
-            >
-              You are not a tutor yet
-            </Button>
-          )}
+                  <TuitionApplyModal handleApply={handleApply} />
+                </Dialog>
+              )
+            ) : (
+              <Button
+                variant="destructive"
+                className="mt-8 w-full cursor-auto"
+                size="lg"
+              >
+                You are not a tutor yet
+              </Button>
+            ))}
         </div>
       </div>
     </div>

@@ -65,34 +65,36 @@ const MyTuitions = () => {
           <Loader2 className="animate-spin w-6 h-6 text-primary " />
         </div>
       )}
-      <div className="mt-8 flex items-center justify-center gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        {Array.from({ length: data?.totalPages }, (_, i) => (
+      {data?.totalPages > 1 && (
+        <div className="mt-8 flex items-center justify-center gap-2">
           <Button
-            key={i}
-            variant={page === i + 1 ? "default" : "outline"}
+            variant="outline"
             size="icon"
-            onClick={() => setPage(i + 1)}
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
           >
-            {i + 1}
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-        ))}
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={page === data?.totalPages}
-          onClick={() => setPage(page + 1)}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+          {Array.from({ length: data?.totalPages }, (_, i) => (
+            <Button
+              key={i}
+              variant={page === i + 1 ? "default" : "outline"}
+              size="icon"
+              onClick={() => setPage(i + 1)}
+            >
+              {i + 1}
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={page === data?.totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

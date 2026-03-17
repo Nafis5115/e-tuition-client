@@ -1,7 +1,7 @@
 import React from "react";
 
 const useRole = () => {
-  const role = "tutor";
+  const role = "user";
   return role;
 };
 
