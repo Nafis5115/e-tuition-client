@@ -19,6 +19,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import useAuth from "../hooks/useAuth";
 import { Dialog, DialogTrigger } from "../components/ui/dialog";
 import TuitionApplyModal from "../components/modals/TuitionApplyModal";
+import useRole from "../hooks/useRole";
 
 const TuitionDetails = () => {
   const { id } = useParams();
@@ -28,7 +29,22 @@ const TuitionDetails = () => {
   const location = useLocation();
   const from = location.state?.from;
   const [openDialog, setOpenDialog] = useState(false);
-  const { data: tuition = {}, isLoading } = useQuery({
+  const role = useRole();
+  const {
+    data: alreadyApplied = {},
+    isLoading: checkAppliedLoading,
+    refetch: appliedRefetch,
+  } = useQuery({
+    queryKey: ["check-alreadyApplied", id, user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosInstance.get(
+        `/api/check-alreadyApplied?tutorEmail=${user?.email}&tuitionId=${id}`,
+      );
+      return res.data;
+    },
+  });
+  const { data: tuition = {}, isLoading: tuitionLoading } = useQuery({
     queryKey: ["tuition-details", id],
     queryFn: async () => {
       const res = await axiosInstance.get(`/api/tuition-details/${id}`);
@@ -42,13 +58,16 @@ const TuitionDetails = () => {
         tuitionId: tuition._id,
         tutorEmail: user?.email,
       });
+      toast.success("Successfully Applied For This Tuition.");
+      setOpenDialog(false);
+      appliedRefetch();
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong.");
     }
   };
 
-  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
+  if (tuitionLoading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <div className="section-padding">
@@ -104,17 +123,36 @@ const TuitionDetails = () => {
               ))}
             </ul>
           </div>
-          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-            <DialogTrigger asChild>
-              <Button onClick={handleApply} className="mt-8 w-full" size="lg">
-                Apply as Tutor
+          {role === "tutor" ? (
+            !user?.email || checkAppliedLoading ? (
+              <Button className="mt-8 w-full" size="lg" disabled>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Checking...
               </Button>
-            </DialogTrigger>
+            ) : alreadyApplied?.applied ? (
+              <Button variant="danger" className="mt-8 w-full" size="lg">
+                Already Applied
+              </Button>
+            ) : (
+              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <DialogTrigger asChild>
+                  <Button className="mt-8 w-full" size="lg">
+                    Apply as Tutor
+                  </Button>
+                </DialogTrigger>
 
-            <TuitionApplyModal
-              setOpenDialog={setOpenDialog}
-            ></TuitionApplyModal>
-          </Dialog>
+                <TuitionApplyModal handleApply={handleApply} />
+              </Dialog>
+            )
+          ) : (
+            <Button
+              variant="destructive"
+              className="mt-8 w-full cursor-auto"
+              size="lg"
+            >
+              You are not a tutor yet
+            </Button>
+          )}
         </div>
       </div>
     </div>
