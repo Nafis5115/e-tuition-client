@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
-import { CheckCircle, MapPin, Plus, X } from "lucide-react";
+import { CheckCircle, Plus, X } from "lucide-react";
 import { Label } from "../ui/label";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
@@ -149,9 +149,7 @@ const BecomeTutorModal = ({ setOpenDialog }) => {
 
           <div className="space-y-2">
             <Label htmlFor="location">
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" /> Location
-              </span>
+              <span className="flex items-center gap-1">Location</span>
             </Label>
 
             <Input

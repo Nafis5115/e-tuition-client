@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
-import { Camera, Loader2, MapPin, Plus, X } from "lucide-react";
+import { Camera, Loader2, Plus, X } from "lucide-react";
 import toast from "react-hot-toast";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -239,9 +239,7 @@ const TutorProfileSettings = ({ role = "student" }) => {
 
         <div className="space-y-2">
           <Label htmlFor="location">
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5" /> Location
-            </span>
+            <span className="flex items-center gap-1">Location</span>
           </Label>
 
           <Input

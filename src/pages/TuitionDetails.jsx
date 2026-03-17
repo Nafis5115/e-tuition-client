@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
 import {
@@ -14,12 +14,20 @@ import useAxios from "../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { formatDateWithMonth } from "../lib/utils";
+import toast from "react-hot-toast";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import useAuth from "../hooks/useAuth";
+import { Dialog, DialogTrigger } from "../components/ui/dialog";
+import TuitionApplyModal from "../components/modals/TuitionApplyModal";
 
 const TuitionDetails = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const location = useLocation();
   const from = location.state?.from;
+  const [openDialog, setOpenDialog] = useState(false);
   const { data: tuition = {}, isLoading } = useQuery({
     queryKey: ["tuition-details", id],
     queryFn: async () => {
@@ -27,6 +35,18 @@ const TuitionDetails = () => {
       return res.data;
     },
   });
+
+  const handleApply = async () => {
+    try {
+      await axiosSecure.post("/api/create-tutorApplication", {
+        tuitionId: tuition._id,
+        tutorEmail: user?.email,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong.");
+    }
+  };
 
   if (isLoading) return <LoadingSpinner></LoadingSpinner>;
 
@@ -84,10 +104,17 @@ const TuitionDetails = () => {
               ))}
             </ul>
           </div>
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button onClick={handleApply} className="mt-8 w-full" size="lg">
+                Apply as Tutor
+              </Button>
+            </DialogTrigger>
 
-          <Button className="mt-8 w-full" size="lg">
-            Apply as Tutor
-          </Button>
+            <TuitionApplyModal
+              setOpenDialog={setOpenDialog}
+            ></TuitionApplyModal>
+          </Dialog>
         </div>
       </div>
     </div>
