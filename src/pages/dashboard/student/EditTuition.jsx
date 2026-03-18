@@ -30,7 +30,6 @@ const EditTuition = () => {
     queryKey: ["edit-tuition-details", id],
     queryFn: async () => {
       const res = await axiosSecure.get(`/api/tuition-details/${id}`);
-      console.log(res.data);
       return res.data;
     },
   });
