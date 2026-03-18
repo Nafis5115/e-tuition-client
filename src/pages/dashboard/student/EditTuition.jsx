@@ -10,15 +10,31 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 
-import { Plus, X } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAuth from "../../../hooks/useAuth";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
-const PostTuition = () => {
+import LoadingSpinner from "../../../components/LoadingSpinner";
+
+const EditTuition = () => {
+  const { id } = useParams();
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
+
+  const { data: tuition = {}, isLoading: tuitionLoading } = useQuery({
+    queryKey: ["edit-tuition-details", id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/api/tuition-details/${id}`);
+      console.log(res.data);
+      return res.data;
+    },
+  });
+
   const {
     register,
     control,
@@ -26,9 +42,20 @@ const PostTuition = () => {
     formState: { errors },
     handleSubmit,
   } = useForm({
-    defaultValues: {
-      requirements: [{ value: "" }],
-    },
+    values: tuition?._id
+      ? {
+          subject: tuition.subject || "",
+          class: tuition.class || "",
+          medium: tuition.medium || "",
+          budget: tuition.budget || "",
+          location: tuition.location || "",
+          description: tuition.description || "",
+          schedule: tuition.schedule || "",
+          requirements: tuition.requirements?.map((r) => ({ value: r })) || [
+            { value: "" },
+          ],
+        }
+      : undefined,
   });
 
   const {
@@ -38,21 +65,29 @@ const PostTuition = () => {
   } = useFieldArray({
     control,
     name: "requirements",
-    rules: {
-      minLength: {
-        value: 1,
-        message: "At least one requirement is required",
-      },
-    },
   });
 
-  const axiosSecure = useAxiosSecure();
-  const navigate = useNavigate();
+  //   useEffect(() => {
+  //     if (!tuition?._id) return;
+
+  //     reset({
+  //       subject: tuition?.subject || "",
+  //       class: tuition?.class || "",
+  //       budget: tuition?.budget || "",
+  //       location: tuition?.location || "",
+  //       description: tuition?.description || "",
+  //       schedule: tuition?.schedule || "",
+  //       medium: tuition?.medium || "",
+  //       requirements: tuition?.requirements?.map((r) => ({ value: r })) || [
+  //         { value: "" },
+  //       ],
+  //     });
+  //   }, [tuition, reset]);
 
   const handleOnSubmit = async (data) => {
     try {
       const formattedRequirements = data.requirements.map((r) => r.value);
-      const newTuition = {
+      const updatedTuition = {
         userEmail: user?.email,
         subject: data.subject,
         class: data.class,
@@ -63,8 +98,8 @@ const PostTuition = () => {
         description: data.description,
         requirements: formattedRequirements,
       };
-      await axiosSecure.post("/api/create-tuition", newTuition);
-      toast.success("Tuition Created Successful.");
+      await axiosSecure.patch(`/api/update-tuition/${id}`, updatedTuition);
+      toast.success("Tuition Updated Successful.");
       navigate("/dashboard/my-tuitions");
     } catch (e) {
       console.log(e);
@@ -74,10 +109,24 @@ const PostTuition = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Post New Tuition</h1>
-      <p className="text-muted-foreground">
-        Create a tuition post to find the perfect tutor
-      </p>
+      <div className="flex gap-5">
+        <Button
+          variant="default"
+          size="icon"
+          onClick={() => navigate("/dashboard/my-tuitions")}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold">Edit Tuition</h1>
+
+          <p className="text-muted-foreground">
+            Update your tuition post details
+          </p>
+        </div>
+      </div>
+
+      {tuitionLoading && <LoadingSpinner></LoadingSpinner>}
 
       <form
         onSubmit={handleSubmit(handleOnSubmit)}
@@ -103,7 +152,6 @@ const PostTuition = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <Select
-                  defaultValue=""
                   onValueChange={field.onChange}
                   value={field.value || ""}
                 >
@@ -171,7 +219,6 @@ const PostTuition = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <Select
-                  defaultValue=""
                   onValueChange={field.onChange}
                   value={field.value || ""}
                 >
@@ -262,4 +309,4 @@ const PostTuition = () => {
   );
 };
 
-export default PostTuition;
+export default EditTuition;

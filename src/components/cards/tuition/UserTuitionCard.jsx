@@ -63,8 +63,13 @@ const UserTuitionCard = ({ tuition }) => {
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
-          <Button size="icon" variant="ghost">
-            <Edit className="h-4 w-4" />
+          <Button size="icon" variant="ghost" asChild>
+            <Link
+              to={`/dashboard/edit-tuition/${tuition._id}`}
+              state={{ from: location.pathname }}
+            >
+              <Edit className="h-4 w-4" />
+            </Link>
           </Button>
           <Button size="icon" variant="ghost" className="text-destructive">
             <Trash2 className="h-4 w-4" />

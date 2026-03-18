@@ -29,6 +29,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import PrivateRoute from "./PrivateRoute";
 import StudentProfileSettings from "../pages/dashboard/student/StudentProfileSettings";
 import TutorProfileSettings from "../pages/dashboard/tutor/TutorProfileSettings";
+import EditTuition from "../pages/dashboard/student/EditTuition";
 
 const router = createBrowserRouter([
   {
@@ -96,6 +97,10 @@ const router = createBrowserRouter([
           {
             path: "post-tuition",
             Component: PostTuition,
+          },
+          {
+            path: "edit-tuition/:id",
+            Component: EditTuition,
           },
           {
             path: "payments",
