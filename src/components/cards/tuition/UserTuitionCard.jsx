@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
 import { Link, useLocation } from "react-router";
 import {
   Edit,
@@ -12,6 +11,16 @@ import {
   Loader2,
 } from "lucide-react";
 import { capitalizeFirstWord } from "../../../lib/utils";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
 
 const statusColor = {
   Approved:
@@ -21,7 +30,7 @@ const statusColor = {
   Rejected: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
 };
 
-const UserTuitionCard = ({ tuition }) => {
+const UserTuitionCard = ({ tuition, handleDeleteTuition }) => {
   const location = useLocation();
   return (
     <div className="card-elevated rounded-xl border bg-card p-5">
@@ -71,9 +80,38 @@ const UserTuitionCard = ({ tuition }) => {
               <Edit className="h-4 w-4" />
             </Link>
           </Button>
-          <Button size="icon" variant="ghost" className="text-destructive">
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="icon" variant="ghost" className="text-destructive">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[400px]">
+              <DialogHeader>
+                <DialogTitle className="text-center text-xl font-bold">
+                  Are you sure?
+                </DialogTitle>
+                <DialogDescription className="text-center">
+                  Do you want to delete this tuition?
+                </DialogDescription>
+              </DialogHeader>
+
+              <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
+                <DialogClose asChild>
+                  <Button variant="outline" className="flex-1">
+                    No
+                  </Button>
+                </DialogClose>
+
+                <Button
+                  onClick={() => handleDeleteTuition(tuition._id)}
+                  className="flex-1 bg-primary"
+                >
+                  Yes
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>

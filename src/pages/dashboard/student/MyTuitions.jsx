@@ -8,12 +8,17 @@ import useAuth from "../../../hooks/useAuth";
 import UserTuitionCard from "../../../components/cards/tuition/UserTuitionCard";
 import { useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
 
 const MyTuitions = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    refetch: tuitionRefetch,
+  } = useQuery({
     queryKey: ["my-tuitions", user?.email, page],
     enabled: !!user?.email,
     queryFn: async () => {
@@ -23,6 +28,21 @@ const MyTuitions = () => {
       return res.data;
     },
   });
+
+  const handleDeleteTuition = async (id) => {
+    try {
+      await axiosSecure.delete(`/api/delete-tuition/${id}`);
+      const res = await tuitionRefetch();
+      const updatedList = res.data?.data || [];
+      if (updatedList.length === 0 && page > 1) {
+        setPage((prev) => prev - 1);
+      }
+      toast.success("Tuition Deleted Successfully.");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something Went Wrong.");
+    }
+  };
 
   return (
     <div>
@@ -44,6 +64,7 @@ const MyTuitions = () => {
             <UserTuitionCard
               key={tuition._id}
               tuition={tuition}
+              handleDeleteTuition={handleDeleteTuition}
             ></UserTuitionCard>
           ))}
           {data.data?.length === 0 && (
