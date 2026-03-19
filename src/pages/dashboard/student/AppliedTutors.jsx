@@ -1,8 +1,9 @@
 import { useState } from "react";
 
 import { Button } from "../../../components/ui/button";
-import { CheckCircle, XCircle, Star } from "lucide-react";
+import { CheckCircle, XCircle, Star, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router";
 
 const initialApplications = [
   {
@@ -101,6 +102,11 @@ const AppliedTutors = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" className="gap-1" asChild>
+                  <Link to={`/dashboard/applied-tutor/${app.id}`}>
+                    <Eye className="h-4 w-4" /> View
+                  </Link>
+                </Button>
                 {app.status === "Pending" ? (
                   <>
                     <Button
