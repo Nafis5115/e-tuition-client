@@ -5,11 +5,12 @@ import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { capitalizeFirstWord } from "../../../lib/utils";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const AppliedTutors = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: appliedTutors = [] } = useQuery({
+  const { data: appliedTutors = [], isLoading: tutorLoading } = useQuery({
     queryKey: ["applied-tutors", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
@@ -19,6 +20,7 @@ const AppliedTutors = () => {
       return res.data;
     },
   });
+  if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
       <h1 className="text-2xl font-bold">Applied Tutors</h1>
