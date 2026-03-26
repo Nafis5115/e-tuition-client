@@ -85,6 +85,7 @@ const Register = () => {
         name: result.user.displayName,
         email: result.user.email,
         phone: phone,
+        photoURL: photoURL,
       };
 
       await axiosInstance

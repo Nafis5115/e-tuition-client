@@ -43,6 +43,7 @@ const LoginPage = () => {
       const newUser = {
         name: result.user.displayName,
         email: result.user.email,
+        photoURL: result.user.photoURL,
       };
       await axiosInstance
         .post("/api/create-user", newUser)

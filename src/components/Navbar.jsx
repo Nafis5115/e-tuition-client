@@ -13,6 +13,7 @@ import {
   LogOut,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
+import useRole from "../hooks/useRole";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const { user, logout, loading } = useAuth();
+  const role = useRole();
 
   return (
     <nav className="sticky top-0 z-50 glass-effect border-b">
@@ -58,7 +60,15 @@ const Navbar = () => {
               //
               <>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link to="/dashboard">
+                  <Link
+                    to={
+                      role === "student"
+                        ? "/dashboard"
+                        : role === "tutor"
+                          ? "/dashboard/tutor"
+                          : "/dashboard/admin"
+                    }
+                  >
                     <LayoutDashboard className="mr-1 h-4 w-4" /> Dashboard
                   </Link>
                 </Button>
