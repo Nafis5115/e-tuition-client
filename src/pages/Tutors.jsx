@@ -3,56 +3,19 @@ import { Link } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Star, Search } from "lucide-react";
-
-const tutors = Array.from({ length: 12 }, (_, i) => ({
-  id: i + 1,
-  name: [
-    "Dr. Rafiq Ahmed",
-    "Fatima Khan",
-    "Arif Hossain",
-    "Nusrat Jahan",
-    "Kamal Uddin",
-    "Sabrina Akter",
-    "Tanvir Islam",
-    "Reshma Begum",
-    "Imran Ali",
-    "Priya Das",
-    "Shakil Mahmud",
-    "Maliha Rahman",
-  ][i],
-  subject: [
-    "Mathematics",
-    "English",
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "Bangla",
-    "ICT",
-    "Economics",
-    "Mathematics",
-    "English",
-    "Physics",
-    "Chemistry",
-  ][i],
-  rating: (4.5 + (i % 5) * 0.1).toFixed(1),
-  experience: `${3 + (i % 6)} years`,
-  avatar: [
-    "RA",
-    "FK",
-    "AH",
-    "NJ",
-    "KU",
-    "SA",
-    "TI",
-    "RB",
-    "IA",
-    "PD",
-    "SM",
-    "MR",
-  ][i],
-}));
+import useAxios from "../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
 
 const TutorsPage = () => {
+  const axiosInstance = useAxios();
+  const { data: tutors = [] } = useQuery({
+    queryKey: ["all-tutors"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/api/all-tutors");
+      console.log(res.data);
+      return res.data;
+    },
+  });
   return (
     <div className="section-padding">
       <div className="container mx-auto">
@@ -70,18 +33,22 @@ const TutorsPage = () => {
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {tutors.map((t) => (
             <div
-              key={t.id}
+              key={t._id}
               className="card-elevated rounded-xl border bg-card p-5 text-center"
             >
               <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 font-heading text-xl font-bold text-primary">
-                {t.avatar}
+                <img
+                  src={t.photoURL}
+                  alt=""
+                  className="flex h-14 w-14  items-center justify-center rounded-full object-cover"
+                />
               </div>
               <h3 className="font-heading text-lg font-semibold">{t.name}</h3>
-              <p className="text-sm text-muted-foreground">{t.subject}</p>
+              <p className="text-sm text-muted-foreground">{t.subjects[0]}</p>
               <div className="mt-2 flex items-center justify-center gap-1 text-sm">
-                <Star className="h-4 w-4 fill-accent text-accent" />
-                <span className="font-semibold">{t.rating}</span>
-                <span className="text-muted-foreground">• {t.experience}</span>
+                <span className="text-muted-foreground">
+                  📅 {t.experience} {t.experience > 1 ? "years" : "year"}
+                </span>
               </div>
               <Button
                 size="sm"
