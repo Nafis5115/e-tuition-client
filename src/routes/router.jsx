@@ -53,7 +53,7 @@ const router = createBrowserRouter([
         Component: TutorsPage,
       },
       {
-        path: "tutors/:id",
+        path: "tutor-details/:id",
         Component: TutorProfile,
       },
       {

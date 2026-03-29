@@ -1,6 +1,6 @@
 import { Button } from "../../../components/ui/button";
 import { CheckCircle, XCircle, Star, Eye } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 const AppliedTutors = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const location = useLocation();
   const { data: appliedTutors = [], isLoading: tutorLoading } = useQuery({
     queryKey: ["applied-tutors", user?.email],
     enabled: !!user?.email,
@@ -58,7 +59,10 @@ const AppliedTutors = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" className="gap-1" asChild>
-                  <Link to={`/dashboard/applied-tutor/${tutor._id}`}>
+                  <Link
+                    to={`/tutor-details/${tutor.tutorId}`}
+                    state={{ from: location.pathname }}
+                  >
                     <Eye className="h-4 w-4" /> View
                   </Link>
                 </Button>

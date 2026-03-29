@@ -27,7 +27,7 @@ const TuitionDetails = () => {
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
   const location = useLocation();
-  const from = location.state?.from;
+  const from = location.state?.from || "/";
   const [openDialog, setOpenDialog] = useState(false);
   const role = useRole();
   const {

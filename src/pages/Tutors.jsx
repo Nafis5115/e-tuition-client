@@ -1,21 +1,23 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Star, Search } from "lucide-react";
 import useAxios from "../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const TutorsPage = () => {
   const axiosInstance = useAxios();
-  const { data: tutors = [] } = useQuery({
+  const location = useLocation();
+  const { data: tutors = [], isLoading: tutorLoading } = useQuery({
     queryKey: ["all-tutors"],
     queryFn: async () => {
       const res = await axiosInstance.get("/api/all-tutors");
-      console.log(res.data);
       return res.data;
     },
   });
+  if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="section-padding">
       <div className="container mx-auto">
@@ -56,7 +58,12 @@ const TutorsPage = () => {
                 variant="outline"
                 asChild
               >
-                <Link to={`/tutors/${t.id}`}>View Profile</Link>
+                <Link
+                  to={`/tutor-details/${t._id}`}
+                  state={{ from: location.pathname }}
+                >
+                  View Profile
+                </Link>
               </Button>
             </div>
           ))}
