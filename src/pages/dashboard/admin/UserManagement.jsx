@@ -12,10 +12,23 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
+import toast from "react-hot-toast";
+import { capitalizeFirstWord } from "../../../lib/utils";
 
 const UserManagement = () => {
   const axiosSecure = useAxiosSecure();
   const [changeStatusLoading, setChangeStatusLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const {
     data: users = [],
     refetch,
@@ -36,9 +49,25 @@ const UserManagement = () => {
       .then((res) => {
         if (res.data.modifiedCount) {
           setChangeStatusLoading(false);
+          toast.success(
+            `Successfully Changed User Role To ${capitalizeFirstWord(role)}`,
+          );
           refetch();
         }
-      });
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const handleDeleteUser = async (id) => {
+    await axiosSecure
+      .delete(`/api/delete-user/${id}`)
+      .then((res) => {
+        if (res.data.deletedCount) {
+          toast.success("User Deleted Successfully.");
+          refetch();
+        }
+      })
+      .catch((e) => console.log(e));
   };
   if (userLoading || changeStatusLoading)
     return <LoadingSpinner></LoadingSpinner>;
@@ -106,16 +135,48 @@ const UserManagement = () => {
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex justify-end gap-1">
-                    <Button size="icon" variant="ghost">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="text-destructive"
+                    <Dialog
+                      open={selectedUser === u._id}
+                      onOpenChange={(open) => {
+                        if (!open) setSelectedUser(null);
+                      }}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="text-destructive"
+                          onClick={() => setSelectedUser(u._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[400px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-center text-xl font-bold">
+                            Are you sure?
+                          </DialogTitle>
+                          <DialogDescription className="text-center">
+                            Do you want to delete this user?
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
+                          <DialogClose asChild>
+                            <Button variant="outline" className="flex-1">
+                              No
+                            </Button>
+                          </DialogClose>
+
+                          <Button
+                            onClick={() => handleDeleteUser(selectedUser)}
+                            className="flex-1 bg-primary"
+                          >
+                            Yes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </td>
               </tr>
