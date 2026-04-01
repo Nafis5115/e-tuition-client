@@ -6,21 +6,39 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Button } from "../../../components/ui/button";
 import { CheckCircle, Eye, XCircle } from "lucide-react";
 import { capitalizeFirstWord } from "../../../lib/utils";
+import toast from "react-hot-toast";
 
 const TutorManagement = () => {
   const axiosSecure = useAxiosSecure();
   const location = useLocation();
-  const { data: tutors = [], isLoading: tutorLoading } = useQuery({
+  const {
+    data: tutors = [],
+    isLoading: tutorLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["pending-tutors"],
     queryFn: async () => {
       const res = await axiosSecure.get(`/api/pending-tutors`);
       return res.data;
     },
   });
+  const handleTutorRequest = async (email, role, status) => {
+    await axiosSecure
+      .patch(`/api/manage-tutor/${email}`, { role, status })
+      .then((res) => {
+        if (res.data.role.modifiedCount && res.data.status.modifiedCount) {
+          refetch();
+          toast.success(
+            `Application ${capitalizeFirstWord(status)} Successfully.`,
+          );
+        }
+      })
+      .catch((e) => console.log(e));
+  };
   if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
-      <h1 className="text-2xl font-bold">Applied Tutors</h1>
+      <h1 className="text-2xl font-bold">Tutor Management</h1>
       <p className="text-muted-foreground">
         Review tutor applications for your tuition posts
       </p>
@@ -58,20 +76,29 @@ const TutorManagement = () => {
                 </Button>
                 {tutor.status === "pending" ? (
                   <>
-                    <Button size="sm" className="gap-1">
+                    <Button
+                      size="sm"
+                      className="gap-1"
+                      onClick={() =>
+                        handleTutorRequest(tutor.email, "tutor", "approved")
+                      }
+                    >
                       <CheckCircle className="h-4 w-4" /> Accept
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       className="gap-1 text-destructive"
+                      onClick={() =>
+                        handleTutorRequest(tutor.email, "student", "rejected")
+                      }
                     >
                       <XCircle className="h-4 w-4" /> Reject
                     </Button>
                   </>
                 ) : (
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${tutor.status === "Approved" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${tutor.status === "approved" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}
                   >
                     {capitalizeFirstWord(tutor.status)}
                   </span>
