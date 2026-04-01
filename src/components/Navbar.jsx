@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 import useRole from "../hooks/useRole";
+import LoadingSpinner from "./LoadingSpinner";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -27,7 +28,9 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const { user, logout, loading } = useAuth();
-  const role = useRole();
+  const { role, roleLoading } = useRole();
+
+  if (roleLoading || loading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <nav className="sticky top-0 z-50 glass-effect border-b">
