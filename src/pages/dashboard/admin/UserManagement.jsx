@@ -31,33 +31,6 @@ const initialUsers = [
     avatar: "RA",
     phone: "+880 1812-345678",
   },
-  {
-    id: 3,
-    name: "Fatima Khan",
-    email: "fatima@example.com",
-    role: "Tutor",
-    status: "Active",
-    avatar: "FK",
-    phone: "+880 1912-345678",
-  },
-  {
-    id: 4,
-    name: "Kamal Uddin",
-    email: "kamal@example.com",
-    role: "Student",
-    status: "Inactive",
-    avatar: "KU",
-    phone: "+880 1612-345678",
-  },
-  {
-    id: 5,
-    name: "Nusrat Jahan",
-    email: "nusrat@example.com",
-    role: "Student",
-    status: "Active",
-    avatar: "NJ",
-    phone: "+880 1512-345678",
-  },
 ];
 
 const UserManagement = () => {

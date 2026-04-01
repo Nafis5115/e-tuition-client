@@ -30,6 +30,7 @@ import PrivateRoute from "./PrivateRoute";
 import StudentProfileSettings from "../pages/dashboard/student/StudentProfileSettings";
 import TutorProfileSettings from "../pages/dashboard/tutor/TutorProfileSettings";
 import EditTuition from "../pages/dashboard/student/EditTuition";
+import TutorManagement from "../pages/dashboard/admin/TutorManagement";
 
 const router = createBrowserRouter([
   {
@@ -156,6 +157,10 @@ const router = createBrowserRouter([
               {
                 path: "user-management",
                 Component: UserManagement,
+              },
+              {
+                path: "tutor-management",
+                Component: TutorManagement,
               },
             ],
           },

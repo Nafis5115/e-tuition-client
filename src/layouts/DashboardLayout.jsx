@@ -63,6 +63,11 @@ const adminLinks = [
     icon: BookOpen,
   },
   {
+    name: "Tutor Management",
+    path: "/dashboard/admin/tutor-management",
+    icon: Users,
+  },
+  {
     name: "Reports & Analytics",
     path: "/dashboard/admin/reports-analytics",
     icon: BarChart3,
