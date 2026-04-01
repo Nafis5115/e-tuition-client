@@ -12,6 +12,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import useRole from "../hooks/useRole";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const studentLinks = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -76,7 +77,7 @@ const adminLinks = [
 ];
 
 const DashboardLayout = () => {
-  const role = useRole();
+  const { role, roleLoading } = useRole();
   const links =
     role === "admin"
       ? adminLinks
@@ -84,7 +85,7 @@ const DashboardLayout = () => {
         ? tutorLinks
         : studentLinks;
   const location = useLocation();
-
+  if (roleLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       <aside className="hidden w-64 border-r bg-card p-4 md:block">
