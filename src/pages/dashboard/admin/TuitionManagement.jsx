@@ -3,6 +3,9 @@ import { CheckCircle, XCircle, MapPin, DollarSign } from "lucide-react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { capitalizeFirstWord } from "../../../lib/utils";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 const statusColor = {
   Approved:
@@ -14,14 +17,35 @@ const statusColor = {
 
 const TuitionManagement = () => {
   const axiosSecure = useAxiosSecure();
-  const { data: tuitions = [] } = useQuery({
+  const [updateStatusLoading, setUpdateStatusLoading] = useState(false);
+  const {
+    data: tuitions = [],
+    isLoading: tuitionLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["all-tuitions-admin"],
     queryFn: async () => {
       const res = await axiosSecure.get("/api/all-tuitions");
-      console.log(res.data);
       return res.data;
     },
   });
+
+  const handleStatus = async (id, status) => {
+    setUpdateStatusLoading(true);
+    await axiosSecure
+      .patch(`/api/manage-tuition/${id}`, { status })
+      .then((res) => {
+        if (res.data.modifiedCount) {
+          refetch();
+          setUpdateStatusLoading(false);
+          toast.success(`Successfully ${capitalizeFirstWord(status)} Tuition.`);
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
+  if (tuitionLoading || updateStatusLoading)
+    return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <div>
@@ -63,13 +87,18 @@ const TuitionManagement = () => {
                 </span>
                 {t.status === "pending" && (
                   <>
-                    <Button size="sm" className="gap-1">
+                    <Button
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => handleStatus(t._id, "approved")}
+                    >
                       <CheckCircle className="h-4 w-4" /> Approve
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       className="gap-1 text-destructive"
+                      onClick={() => handleStatus(t._id, "rejected")}
                     >
                       <XCircle className="h-4 w-4" /> Reject
                     </Button>
