@@ -40,7 +40,7 @@ const TuitionsPage = () => {
     ],
     queryFn: async () => {
       const res = await axiosInstance.get(
-        `/api/all-tuitions?page=${page}&limit=8&class=${selectedClass}&sort=${sort}&search=${debouncedSearch}`,
+        `/api/all-approved-tuitions?page=${page}&limit=8&class=${selectedClass}&sort=${sort}&search=${debouncedSearch}`,
       );
       return res.data;
     },

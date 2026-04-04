@@ -114,7 +114,7 @@ const HomePage = () => {
   const { data: tuitions = [], isLoading } = useQuery({
     queryKey: ["index-tuitions"],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/api/all-tuitions?limit=8`);
+      const res = await axiosInstance.get(`/api/all-approved-tuitions?limit=8`);
       return res.data.tuitions;
     },
   });
