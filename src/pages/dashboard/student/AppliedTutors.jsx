@@ -21,6 +21,22 @@ const AppliedTutors = () => {
       return res.data;
     },
   });
+
+  const handlePayment = async (tutor) => {
+    const tutorInfo = {
+      tuitionId: tutor._id,
+      subject: tutor.subject,
+      budget: tutor.budget,
+      email: tutor.tutorEmail,
+    };
+
+    const res = await axiosSecure.post(
+      "/api/create-checkout-session",
+      tutorInfo,
+    );
+    console.log(res.data);
+  };
+
   if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
@@ -68,7 +84,11 @@ const AppliedTutors = () => {
                 </Button>
                 {tutor.status === "pending" ? (
                   <>
-                    <Button size="sm" className="gap-1">
+                    <Button
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => handlePayment(tutor)}
+                    >
                       <CheckCircle className="h-4 w-4" /> Accept
                     </Button>
                     <Button
