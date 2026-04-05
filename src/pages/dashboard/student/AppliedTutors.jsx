@@ -27,14 +27,15 @@ const AppliedTutors = () => {
       tuitionId: tutor._id,
       subject: tutor.subject,
       budget: tutor.budget,
-      email: tutor.tutorEmail,
+      email: user?.email,
+      tutorEmail: tutor.tutorEmail,
     };
 
     const res = await axiosSecure.post(
       "/api/create-checkout-session",
       tutorInfo,
     );
-    console.log(res.data);
+    window.location.href = res.data.url;
   };
 
   if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
@@ -101,7 +102,7 @@ const AppliedTutors = () => {
                   </>
                 ) : (
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${tutor.status === "Approved" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${tutor.status === "accepted" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}
                   >
                     {capitalizeFirstWord(tutor.status)}
                   </span>

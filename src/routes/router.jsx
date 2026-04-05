@@ -31,6 +31,7 @@ import StudentProfileSettings from "../pages/dashboard/student/StudentProfileSet
 import TutorProfileSettings from "../pages/dashboard/tutor/TutorProfileSettings";
 import EditTuition from "../pages/dashboard/student/EditTuition";
 import TutorManagement from "../pages/dashboard/admin/TutorManagement";
+import PaymentSuccess from "../pages/dashboard/student/PaymentSuccess";
 
 const router = createBrowserRouter([
   {
@@ -106,6 +107,10 @@ const router = createBrowserRouter([
           {
             path: "payments",
             Component: Payments,
+          },
+          {
+            path: "payment-success",
+            Component: PaymentSuccess,
           },
 
           {
