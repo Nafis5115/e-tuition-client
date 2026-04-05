@@ -25,14 +25,6 @@ const transactions = [
     type: "debit",
     status: "Completed",
   },
-  {
-    id: 4,
-    description: "Refund - Chemistry Tuition Cancelled",
-    amount: "৳4,500",
-    date: "2024-01-10",
-    type: "credit",
-    status: "Completed",
-  },
 ];
 
 const Payments = () => (
@@ -42,7 +34,7 @@ const Payments = () => (
       View your payment history and transactions
     </p>
 
-    <div className="mt-6 grid gap-4 sm:grid-cols-3">
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 text-center">
       <div className="card-elevated rounded-xl border bg-card p-5">
         <p className="text-sm text-muted-foreground">Total Spent</p>
         <p className="mt-1 text-2xl font-bold">৳16,500</p>
@@ -50,10 +42,6 @@ const Payments = () => (
       <div className="card-elevated rounded-xl border bg-card p-5">
         <p className="text-sm text-muted-foreground">This Month</p>
         <p className="mt-1 text-2xl font-bold">৳6,000</p>
-      </div>
-      <div className="card-elevated rounded-xl border bg-card p-5">
-        <p className="text-sm text-muted-foreground">Refunds</p>
-        <p className="mt-1 text-2xl font-bold">৳4,500</p>
       </div>
     </div>
 
@@ -68,14 +56,8 @@ const Payments = () => (
             className="flex items-center justify-between rounded-xl border bg-card p-4"
           >
             <div className="flex items-center gap-3">
-              <div
-                className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.type === "debit" ? "bg-red-100 dark:bg-red-900/30" : "bg-green-100 dark:bg-green-900/30"}`}
-              >
-                {t.type === "debit" ? (
-                  <ArrowUpRight className="h-5 w-5 text-red-600" />
-                ) : (
-                  <ArrowDownRight className="h-5 w-5 text-green-600" />
-                )}
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl  bg-red-100 dark:bg-red-900/30">
+                <ArrowUpRight className="h-5 w-5 text-red-600" />
               </div>
               <div>
                 <p className="text-sm font-medium">{t.description}</p>
@@ -83,12 +65,7 @@ const Payments = () => (
               </div>
             </div>
             <div className="text-right">
-              <p
-                className={`font-semibold ${t.type === "debit" ? "text-red-600" : "text-green-600"}`}
-              >
-                {t.type === "debit" ? "-" : "+"}
-                {t.amount}
-              </p>
+              <p className="font-semibold text-red-600">-{t.amount}</p>
               <p className="text-xs text-muted-foreground">{t.status}</p>
             </div>
           </div>
