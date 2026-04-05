@@ -124,7 +124,7 @@ const TuitionDetails = () => {
           </div>
           {!loading &&
             user?.email !== tuition.userEmail &&
-            (role === "tutor" ? (
+            (role.role === "tutor" ? (
               !user?.email || checkAppliedLoading ? (
                 <Button className="mt-8 w-full" size="lg" disabled>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />

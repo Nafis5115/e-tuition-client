@@ -49,7 +49,7 @@ const AppliedTutors = () => {
       <div className="mt-6 space-y-4">
         {appliedTutors.map((tutor) => (
           <div
-            key={tutor._id}
+            key={[tutor.tutorId, tutor._id]}
             className="card-elevated rounded-xl border bg-card p-5"
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
