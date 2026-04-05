@@ -28,6 +28,7 @@ const statusColor = {
   Pending:
     "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
   Rejected: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  Assigned: "bg-accent text-white",
 };
 
 const UserTuitionCard = ({ tuition, handleDeleteTuition }) => {

@@ -122,7 +122,16 @@ const TuitionDetails = () => {
               ))}
             </ul>
           </div>
-          {!loading &&
+          {!loading && tuition.assignedTutor ? (
+            <Link
+              to={`/tutor-details/${tuition.assignedTutor}`}
+              state={{ from: location.pathname }}
+            >
+              <Button className="mt-8 w-full" size="lg">
+                Show Assigned Tutor
+              </Button>
+            </Link>
+          ) : (
             user?.email !== tuition.userEmail &&
             (role.role === "tutor" ? (
               !user?.email || checkAppliedLoading ? (
@@ -153,7 +162,8 @@ const TuitionDetails = () => {
               >
                 You are not a tutor yet
               </Button>
-            ))}
+            ))
+          )}
         </div>
       </div>
     </div>

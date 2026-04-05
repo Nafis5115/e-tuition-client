@@ -71,7 +71,7 @@ const MyTuitions = () => {
             <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
               <BookOpen className="mx-auto h-10 w-10 text-muted-foreground" />
               <p className="mt-3 text-muted-foreground">
-                No tuitions posted yetuition.
+                No tuitions posted yet.
               </p>
               <Button className="mt-4" asChild>
                 <Link to="/dashboard/post-tuition">

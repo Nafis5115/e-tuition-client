@@ -55,7 +55,7 @@ const router = createBrowserRouter([
         Component: TutorsPage,
       },
       {
-        path: "tutor-details/:id",
+        path: "tutor-details/:email",
         Component: TutorProfile,
       },
       {
