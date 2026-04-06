@@ -1,16 +1,21 @@
 import React, { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQueryClient } from "@tanstack/react-query";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
   const sessionId = searchParams.get("session_id");
   useEffect(() => {
     if (sessionId) {
       axiosSecure
         .patch(`/api/payment-success?session_id=${sessionId}`)
-        .then((res) => console.log(res.data))
+        .then((res) => {
+          console.log(res.data);
+          queryClient.invalidateQueries(["user-payment-history"]);
+        })
         .catch((e) => console.log(e));
     }
   }, [sessionId, axiosSecure]);
