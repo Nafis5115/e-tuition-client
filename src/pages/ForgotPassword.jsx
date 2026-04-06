@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { GraduationCap, Mail } from "lucide-react";
+import { ArrowLeft, GraduationCap, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
 import toast from "react-hot-toast";
@@ -25,7 +25,13 @@ const ForgotPassword = () => {
   if (isLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="flex min-h-[calc(100vh-4rem)]  justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-md space-y-2">
+        <Link
+          to={"/login"}
+          className=" inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back
+        </Link>
         <div className="card-elevated rounded-xl border bg-card p-6">
           <form
             onSubmit={handleSubmit(handleResetPassword)}

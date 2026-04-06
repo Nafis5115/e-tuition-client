@@ -113,6 +113,7 @@ const LoginPage = () => {
                   className="pl-10 pr-10"
                 />
                 <button
+                  type="button"
                   onClick={() => setShowPass(!showPass)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 >
@@ -131,12 +132,14 @@ const LoginPage = () => {
                   Password must be 6 characters
                 </p>
               )}
-              <Link
-                to={"/forgot-password"}
-                className="text-sm font-medium text-primary hover:underline flex justify-end"
-              >
-                Forgot Password?
-              </Link>
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline cursor-pointer"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
