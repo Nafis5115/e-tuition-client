@@ -29,7 +29,7 @@ const TuitionDetails = () => {
   const location = useLocation();
   const from = location.state?.from || "/";
   const [openDialog, setOpenDialog] = useState(false);
-  const role = useRole();
+  const { role } = useRole();
   const {
     data: alreadyApplied = {},
     isLoading: checkAppliedLoading,
@@ -133,7 +133,7 @@ const TuitionDetails = () => {
             </Link>
           ) : (
             user?.email !== tuition.userEmail &&
-            (role.role === "tutor" ? (
+            (role === "tutor" ? (
               !user?.email || checkAppliedLoading ? (
                 <Button className="mt-8 w-full" size="lg" disabled>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />

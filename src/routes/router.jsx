@@ -33,6 +33,9 @@ import EditTuition from "../pages/dashboard/student/EditTuition";
 import TutorManagement from "../pages/dashboard/admin/TutorManagement";
 import PaymentSuccess from "../pages/dashboard/student/PaymentSuccess";
 import PaymentCancel from "../pages/dashboard/student/PaymentCancel";
+import StudentRoute from "./StudentRoute";
+import TutorRoute from "./TutorRoute";
+import AdminRoute from "./AdminRoute";
 
 const router = createBrowserRouter([
   {
@@ -85,66 +88,122 @@ const router = createBrowserRouter([
         children: [
           {
             path: "",
-            Component: StudentDashboard,
+            element: (
+              <StudentRoute>
+                <StudentDashboard></StudentDashboard>
+              </StudentRoute>
+            ),
           },
           {
             path: "my-tuitions",
-            Component: MyTuitions,
+            element: (
+              <StudentRoute>
+                <MyTuitions></MyTuitions>
+              </StudentRoute>
+            ),
           },
 
           {
             path: "applied-tutors",
-            Component: AppliedTutors,
+            element: (
+              <StudentRoute>
+                <AppliedTutors></AppliedTutors>
+              </StudentRoute>
+            ),
           },
 
           {
             path: "post-tuition",
-            Component: PostTuition,
+            element: (
+              <StudentRoute>
+                <PostTuition></PostTuition>
+              </StudentRoute>
+            ),
           },
           {
             path: "edit-tuition/:id",
-            Component: EditTuition,
+            element: (
+              <StudentRoute>
+                <EditTuition></EditTuition>
+              </StudentRoute>
+            ),
           },
           {
             path: "payments",
-            Component: Payments,
+            element: (
+              <StudentRoute>
+                <Payments></Payments>
+              </StudentRoute>
+            ),
           },
           {
             path: "payment-success",
-            Component: PaymentSuccess,
+            element: (
+              <StudentRoute>
+                <PaymentSuccess></PaymentSuccess>
+              </StudentRoute>
+            ),
           },
           {
             path: "payment-cancelled",
-            Component: PaymentCancel,
+            element: (
+              <StudentRoute>
+                <PaymentCancel></PaymentCancel>
+              </StudentRoute>
+            ),
           },
 
           {
             path: "profile-settings",
-            Component: StudentProfileSettings,
+            element: (
+              <StudentRoute>
+                <StudentProfileSettings></StudentProfileSettings>
+              </StudentRoute>
+            ),
           },
           {
             path: "tutor",
             children: [
               {
                 path: "",
-                Component: TutorDashboard,
+                element: (
+                  <TutorRoute>
+                    <TutorDashboard></TutorDashboard>
+                  </TutorRoute>
+                ),
               },
               {
                 path: "my-applications",
-                Component: MyApplications,
+                element: (
+                  <TutorRoute>
+                    <MyApplications></MyApplications>
+                  </TutorRoute>
+                ),
               },
 
               {
                 path: "ongoing-tuitions",
-                Component: OngoingTuitions,
+                element: (
+                  <TutorRoute>
+                    <OngoingTuitions></OngoingTuitions>
+                  </TutorRoute>
+                ),
               },
               {
                 path: "revenue-history",
-                Component: RevenueHistory,
+                element: (
+                  <TutorRoute>
+                    <RevenueHistory></RevenueHistory>
+                  </TutorRoute>
+                ),
               },
               {
                 path: "profile-settings",
-                Component: TutorProfileSettings,
+                element: (
+                  <TutorRoute>
+                    <TutorProfileSettings></TutorProfileSettings>
+                  </TutorRoute>
+                ),
               },
             ],
           },
@@ -153,24 +212,44 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "",
-                Component: AdminDashboard,
+                element: (
+                  <AdminRoute>
+                    <AdminDashboard></AdminDashboard>
+                  </AdminRoute>
+                ),
               },
 
               {
                 path: "reports-analytics",
-                Component: ReportsAnalytics,
+                element: (
+                  <AdminRoute>
+                    <ReportsAnalytics></ReportsAnalytics>
+                  </AdminRoute>
+                ),
               },
               {
                 path: "tuition-management",
-                Component: TuitionManagement,
+                element: (
+                  <AdminRoute>
+                    <TuitionManagement></TuitionManagement>
+                  </AdminRoute>
+                ),
               },
               {
                 path: "user-management",
-                Component: UserManagement,
+                element: (
+                  <AdminRoute>
+                    <UserManagement></UserManagement>
+                  </AdminRoute>
+                ),
               },
               {
                 path: "tutor-management",
-                Component: TutorManagement,
+                element: (
+                  <AdminRoute>
+                    <TutorManagement></TutorManagement>
+                  </AdminRoute>
+                ),
               },
             ],
           },
