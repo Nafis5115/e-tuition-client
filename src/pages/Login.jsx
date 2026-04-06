@@ -131,6 +131,12 @@ const LoginPage = () => {
                   Password must be 6 characters
                 </p>
               )}
+              <Link
+                to={"/forgot-password"}
+                className="text-sm font-medium text-primary hover:underline flex justify-end"
+              >
+                Forgot Password?
+              </Link>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (

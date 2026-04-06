@@ -36,6 +36,7 @@ import PaymentCancel from "../pages/dashboard/student/PaymentCancel";
 import StudentRoute from "./StudentRoute";
 import TutorRoute from "./TutorRoute";
 import AdminRoute from "./AdminRoute";
+import ForgotPassword from "../pages/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         Component: LoginPage,
+      },
+      {
+        path: "forgot-password",
+        Component: ForgotPassword,
       },
       {
         path: "register",
