@@ -1,5 +1,5 @@
 import { Button } from "../../../components/ui/button";
-import { CheckCircle, XCircle, Star, Eye } from "lucide-react";
+import { CheckCircle, XCircle, Star, Eye, Users } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -112,6 +112,12 @@ const AppliedTutors = () => {
           </div>
         ))}
       </div>
+      {appliedTutors?.length === 0 && (
+        <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
+          <Users className="mx-auto h-10 w-10 text-muted-foreground" />
+          <p className="mt-3 text-muted-foreground">No tutor applied yet.</p>
+        </div>
+      )}
     </div>
   );
 };
