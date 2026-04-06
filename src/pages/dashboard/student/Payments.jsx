@@ -8,11 +8,12 @@ import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { capitalizeFirstWord, formatDateWithMonth } from "../../../lib/utils";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const Payments = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: payments = [] } = useQuery({
+  const { data: payments = [], isLoading } = useQuery({
     queryKey: ["user-payment-history", user?.email],
     queryFn: async () => {
       const res = await axiosSecure.get(
@@ -30,8 +31,9 @@ const Payments = () => {
       date.getFullYear() === now.getFullYear()
     );
   });
-
   const thisMonthTotal = thisMonth.reduce((sum, p) => sum + p.amount, 0);
+
+  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
       <h1 className="text-2xl font-bold">Payments</h1>

@@ -4,7 +4,7 @@ import useRole from "../hooks/useRole";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ForbiddenAccess from "../pages/ForbiddenAccess";
 
-const TutorRoute = (children) => {
+const TutorRoute = ({ children }) => {
   const { loading } = useAuth();
   const { role, roleLoading } = useRole();
   if (loading || roleLoading) return <LoadingSpinner></LoadingSpinner>;
