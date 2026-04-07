@@ -76,7 +76,7 @@ const Payments = () => {
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-red-600">-৳{p.amount}</p>
+                <p className="font-semibold text-red-600">- ৳{p.amount}</p>
                 <p className="text-xs text-muted-foreground">
                   {capitalizeFirstWord(p.paymentStatus)}
                 </p>
