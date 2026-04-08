@@ -1,22 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Star, Search } from "lucide-react";
+import { Star, Search, BookOpen, User } from "lucide-react";
 import useAxios from "../hooks/useAxios";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const TutorsPage = () => {
   const axiosInstance = useAxios();
+  const [searchTutor, setSearchTutor] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTutor);
   const location = useLocation();
-  const { data: tutors = [], isLoading: tutorLoading } = useQuery({
-    queryKey: ["all-tutors"],
+  const {
+    data: tutors = [],
+    isLoading: tutorLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["all-tutors", debouncedSearch],
     queryFn: async () => {
-      const res = await axiosInstance.get("/api/all-tutors");
+      const res = await axiosInstance.get(
+        `/api/all-tutors?search=${debouncedSearch}`,
+      );
       return res.data;
     },
+    placeholderData: keepPreviousData,
   });
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTutor);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTutor]);
+
   if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="section-padding">
@@ -27,12 +44,19 @@ const TutorsPage = () => {
         <div className="mt-6 relative max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            onChange={(e) => setSearchTutor(e.target.value)}
+            value={searchTutor}
             placeholder="Search tutors by name or subject..."
             className="pl-10"
           />
         </div>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {isFetching && (
+            <div className="flex justify-center mt-4">
+              <LoadingSpinner />
+            </div>
+          )}
           {tutors.map((t) => (
             <div
               key={t._id}
@@ -68,6 +92,12 @@ const TutorsPage = () => {
             </div>
           ))}
         </div>
+        {tutors.length === 0 && (
+          <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
+            <User className="mx-auto h-10 w-10 text-muted-foreground" />
+            <p className="mt-3 text-muted-foreground">No tutor found.</p>
+          </div>
+        )}
       </div>
     </div>
   );

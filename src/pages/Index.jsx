@@ -31,41 +31,6 @@ const fadeUp = {
   }),
 };
 
-const sampleTutors = [
-  {
-    id: 1,
-    name: "Dr. Rafiq Ahmed",
-    subject: "Mathematics",
-    rating: 4.9,
-    experience: "8 years",
-    avatar: "RA",
-  },
-  {
-    id: 2,
-    name: "Fatima Khan",
-    subject: "English Literature",
-    rating: 4.8,
-    experience: "5 years",
-    avatar: "FK",
-  },
-  {
-    id: 3,
-    name: "Arif Hossain",
-    subject: "Physics",
-    rating: 4.7,
-    experience: "6 years",
-    avatar: "AH",
-  },
-  {
-    id: 4,
-    name: "Nusrat Jahan",
-    subject: "Chemistry",
-    rating: 4.9,
-    experience: "7 years",
-    avatar: "NJ",
-  },
-];
-
 const steps = [
   {
     icon: Search,
@@ -266,67 +231,6 @@ const HomePage = () => {
             <Button variant="default" asChild>
               <Link to="/tuitions">
                 View All Tuitions <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-padding bg-muted/40">
-        <div className="container mx-auto">
-          <motion.div
-            className="mb-10 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl font-bold md:text-4xl">Top Rated Tutors</h2>
-            <p className="mt-2 text-muted-foreground">
-              Learn from the best educators on our platform
-            </p>
-          </motion.div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {sampleTutors.map((tutor, i) => (
-              <motion.div
-                key={tutor.id}
-                className="card-elevated rounded-xl border bg-card p-5 text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-              >
-                <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 font-heading text-xl font-bold text-primary">
-                  {tutor.avatar}
-                </div>
-                <h3 className="font-heading text-lg font-semibold">
-                  {tutor.name}
-                </h3>
-                <p className="text-sm text-muted-foreground">{tutor.subject}</p>
-                <div className="mt-2 flex items-center justify-center gap-1 text-sm">
-                  <Star className="h-4 w-4 fill-accent text-accent" />
-                  <span className="font-semibold">{tutor.rating}</span>
-                  <span className="text-muted-foreground">
-                    • {tutor.experience}
-                  </span>
-                </div>
-                <Button
-                  size="sm"
-                  className="mt-4 w-full"
-                  variant="outline"
-                  asChild
-                >
-                  <Link to={`/tutors/${tutor.id}`}>View Profile</Link>
-                </Button>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Button variant="default" asChild>
-              <Link to="/tutors">
-                View All Tutors <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
           </div>

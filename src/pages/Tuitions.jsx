@@ -17,6 +17,7 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
+  BookOpen,
 } from "lucide-react";
 import useAxios from "../hooks/useAxios";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -168,6 +169,12 @@ const TuitionsPage = () => {
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
+          </div>
+        )}
+        {data.tuitions.length === 0 && (
+          <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
+            <BookOpen className="mx-auto h-10 w-10 text-muted-foreground" />
+            <p className="mt-3 text-muted-foreground">No tuition found.</p>
           </div>
         )}
       </div>
