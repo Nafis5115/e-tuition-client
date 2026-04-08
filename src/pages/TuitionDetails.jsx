@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router";
 import { Button } from "../components/ui/button";
 import {
@@ -27,6 +27,7 @@ const TuitionDetails = () => {
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
   const location = useLocation();
+  const [tutorDetails, setTutorDetails] = useState({});
   const from = location.state?.from || "/";
   const [openDialog, setOpenDialog] = useState(false);
   const { role } = useRole();
@@ -44,6 +45,7 @@ const TuitionDetails = () => {
       return res.data;
     },
   });
+
   const { data: tuition = {}, isLoading: tuitionLoading } = useQuery({
     queryKey: ["tuition-details", id],
     queryFn: async () => {
@@ -51,6 +53,17 @@ const TuitionDetails = () => {
       return res.data;
     },
   });
+
+  useEffect(() => {
+    if (tuition.assignedTutor) {
+      axiosSecure
+        .get(`/api/tutor-details?email=${tuition.assignedTutor}`)
+        .then((res) => {
+          setTutorDetails(res.data);
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [tuition.assignedTutor]);
 
   const handleApply = async () => {
     try {
@@ -124,7 +137,7 @@ const TuitionDetails = () => {
           </div>
           {!loading && tuition.assignedTutor ? (
             <Link
-              to={`/tutor-details/${tuition.assignedTutor}`}
+              to={`/tutor-details/${tutorDetails._id}`}
               state={{ from: location.pathname }}
             >
               <Button className="mt-8 w-full" size="lg">

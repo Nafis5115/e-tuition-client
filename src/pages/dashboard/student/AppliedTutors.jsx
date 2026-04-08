@@ -77,7 +77,7 @@ const AppliedTutors = () => {
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" className="gap-1" asChild>
                   <Link
-                    to={`/tutor-details/${tutor.tutorEmail}`}
+                    to={`/tutor-details/${tutor.tutorId}`}
                     state={{ from: location.pathname }}
                   >
                     <Eye className="h-4 w-4" /> View

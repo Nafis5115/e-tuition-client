@@ -14,7 +14,6 @@ const TutorsPage = () => {
     queryKey: ["all-tutors"],
     queryFn: async () => {
       const res = await axiosInstance.get("/api/all-tutors");
-      console.log(res.data);
       return res.data;
     },
   });
@@ -60,7 +59,7 @@ const TutorsPage = () => {
                 asChild
               >
                 <Link
-                  to={`/tutor-details/${t.email}`}
+                  to={`/tutor-details/${t._id}`}
                   state={{ from: location.pathname }}
                 >
                   View Profile

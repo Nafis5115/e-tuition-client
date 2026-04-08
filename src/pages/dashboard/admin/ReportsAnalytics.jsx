@@ -22,7 +22,6 @@ const ReportsAnalytics = () => {
     queryKey: ["admin-reportsAndAnalytics"],
     queryFn: async () => {
       const res = await axiosSecure.get("/api/admin-reportsAndAnalytics");
-      console.log(res.data);
       return res.data;
     },
   });

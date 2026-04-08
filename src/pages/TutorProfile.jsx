@@ -7,15 +7,15 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const TutorProfile = () => {
-  const { email } = useParams();
+  const { id } = useParams();
   const axiosInstance = useAxios();
 
   const location = useLocation();
   const from = location.state?.from || "/";
   const { data: tutor = {}, isLoading: tutorLoading } = useQuery({
-    queryKey: ["tutor-details", email],
+    queryKey: ["tutor-details", id],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/api/tutor-details/${email}`);
+      const res = await axiosInstance.get(`/api/tutor-details/${id}`);
       return res.data;
     },
   });
