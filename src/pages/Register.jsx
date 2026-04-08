@@ -97,7 +97,7 @@ const Register = () => {
       navigate(from);
     } catch (e) {
       console.log(e);
-
+      setPhotoPreview(null);
       if (e.code === "auth/email-already-in-use") {
         toast.error("Email already in use.");
       } else {
