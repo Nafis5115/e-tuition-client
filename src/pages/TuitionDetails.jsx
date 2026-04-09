@@ -55,7 +55,7 @@ const TuitionDetails = () => {
   });
 
   useEffect(() => {
-    if (tuition.assignedTutor) {
+    if (tuition?.assignedTutor) {
       axiosSecure
         .get(`/api/tutor-details?email=${tuition.assignedTutor}`)
         .then((res) => {
@@ -63,7 +63,7 @@ const TuitionDetails = () => {
         })
         .catch((e) => console.log(e));
     }
-  }, [tuition.assignedTutor]);
+  }, [tuition?.assignedTutor]);
 
   const handleApply = async () => {
     try {
@@ -92,39 +92,39 @@ const TuitionDetails = () => {
         </Link>
 
         <div className="card-elevated rounded-xl border bg-card p-6 md:p-8">
-          <h1 className="text-2xl font-bold md:text-3xl">{tuition.subject}</h1>
+          <h1 className="text-2xl font-bold md:text-3xl">{tuition?.subject}</h1>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <BookOpen className="h-4 w-4 text-primary" /> {tuition.class}
+              <BookOpen className="h-4 w-4 text-primary" /> {tuition?.class}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4 text-primary" /> {tuition.location}
+              <MapPin className="h-4 w-4 text-primary" /> {tuition?.location}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <DollarSign className="h-4 w-4 text-primary" /> ৳{tuition.budget}{" "}
+              <DollarSign className="h-4 w-4 text-primary" /> ৳{tuition?.budget}{" "}
               /month
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4 text-primary" /> {tuition.schedule}
+              <Clock className="h-4 w-4 text-primary" /> {tuition?.schedule}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 text-primary" /> Posted:{" "}
-              {formatDateWithMonth(tuition.createdAt)}
+              {formatDateWithMonth(tuition?.createdAt)}
             </div>
           </div>
 
           <div className="mt-6">
             <h2 className="font-heading text-lg font-semibold">Description</h2>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-              {tuition.description}
+              {tuition?.description}
             </p>
           </div>
 
           <div className="mt-6">
             <h2 className="font-heading text-lg font-semibold">Requirements</h2>
             <ul className="mt-2 space-y-1.5">
-              {tuition.requirements?.map((req, i) => (
+              {tuition?.requirements?.map((req, i) => (
                 <li
                   key={i}
                   className="flex items-start gap-2 text-sm text-muted-foreground"
@@ -135,7 +135,7 @@ const TuitionDetails = () => {
               ))}
             </ul>
           </div>
-          {!loading && tuition.assignedTutor ? (
+          {!loading && tuition?.assignedTutor ? (
             <Link
               to={`/tutor-details/${tutorDetails._id}`}
               state={{ from: location.pathname }}
@@ -145,7 +145,7 @@ const TuitionDetails = () => {
               </Button>
             </Link>
           ) : (
-            user?.email !== tuition.userEmail &&
+            user?.email !== tuition?.userEmail &&
             (role === "tutor" ? (
               !user?.email || checkAppliedLoading ? (
                 <Button className="mt-8 w-full" size="lg" disabled>

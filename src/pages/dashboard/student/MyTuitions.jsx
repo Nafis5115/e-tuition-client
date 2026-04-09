@@ -31,13 +31,15 @@ const MyTuitions = () => {
 
   const handleDeleteTuition = async (id) => {
     try {
-      await axiosSecure.delete(`/api/delete-tuition/${id}`);
-      const res = await tuitionRefetch();
-      const updatedList = res.data?.data || [];
-      if (updatedList.length === 0 && page > 1) {
-        setPage((prev) => prev - 1);
+      const deleteData = await axiosSecure.delete(`/api/delete-tuition/${id}`);
+      if (deleteData.data.deleteTuition) {
+        const res = await tuitionRefetch();
+        const updatedList = res.data?.data || [];
+        if (updatedList.length === 0 && page > 1) {
+          setPage((prev) => prev - 1);
+        }
+        toast.success("Tuition Deleted Successfully.");
       }
-      toast.success("Tuition Deleted Successfully.");
     } catch (error) {
       console.log(error);
       toast.error("Something Went Wrong.");

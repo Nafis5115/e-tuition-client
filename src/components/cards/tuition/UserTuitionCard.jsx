@@ -73,46 +73,54 @@ const UserTuitionCard = ({ tuition, handleDeleteTuition }) => {
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
-          <Button size="icon" variant="ghost" asChild>
-            <Link
-              to={`/dashboard/edit-tuition/${tuition._id}`}
-              state={{ from: location.pathname }}
-            >
-              <Edit className="h-4 w-4" />
-            </Link>
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="icon" variant="ghost" className="text-destructive">
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[400px]">
-              <DialogHeader>
-                <DialogTitle className="text-center text-xl font-bold">
-                  Are you sure?
-                </DialogTitle>
-                <DialogDescription className="text-center">
-                  Do you want to delete this tuition?
-                </DialogDescription>
-              </DialogHeader>
-
-              <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
-                <DialogClose asChild>
-                  <Button variant="outline" className="flex-1">
-                    No
-                  </Button>
-                </DialogClose>
-
-                <Button
-                  onClick={() => handleDeleteTuition(tuition._id)}
-                  className="flex-1 bg-primary"
+          {tuition.status === "assigned" || (
+            <>
+              <Button size="icon" variant="ghost" asChild>
+                <Link
+                  to={`/dashboard/edit-tuition/${tuition._id}`}
+                  state={{ from: location.pathname }}
                 >
-                  Yes
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                  <Edit className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[400px]">
+                  <DialogHeader>
+                    <DialogTitle className="text-center text-xl font-bold">
+                      Are you sure?
+                    </DialogTitle>
+                    <DialogDescription className="text-center">
+                      Do you want to delete this tuition?
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
+                    <DialogClose asChild>
+                      <Button variant="outline" className="flex-1">
+                        No
+                      </Button>
+                    </DialogClose>
+
+                    <Button
+                      onClick={() => handleDeleteTuition(tuition._id)}
+                      className="flex-1 bg-primary"
+                    >
+                      Yes
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
         </div>
       </div>
     </div>

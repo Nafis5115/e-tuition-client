@@ -9,9 +9,11 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import useRole from "../../../hooks/useRole";
 
-const StudentProfileSettings = ({ role = "student" }) => {
+const StudentProfileSettings = () => {
   const { user, updateUserProfile } = useAuth();
+  const { role } = useRole();
   const [name, setName] = useState(user?.displayName);
   const [photoPreview, setPhotoPreview] = useState(user?.photoURL);
   const [phone, setPhone] = useState("");
