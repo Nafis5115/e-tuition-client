@@ -4,9 +4,20 @@ import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { capitalizeFirstWord, formatDateWithMonth } from "../../../lib/utils";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
+import toast from "react-hot-toast";
 
 const statusColor = {
-  Approved:
+  Accepted:
     "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   Pending:
     "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
@@ -16,7 +27,11 @@ const statusColor = {
 const MyApplications = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: applications = [], isLoading: applicationLoading } = useQuery({
+  const {
+    data: applications = [],
+    isLoading: applicationLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["tutor-applications", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
@@ -26,6 +41,21 @@ const MyApplications = () => {
       return res.data;
     },
   });
+
+  const handleDeleteApplication = async (id) => {
+    try {
+      const res = await axiosSecure.delete(
+        `/api/delete-tutor-application/${id}`,
+      );
+      if (res.data.deletedCount) {
+        refetch();
+        toast.success("Successfully Deleted Your Application.");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something Went Wrong.");
+    }
+  };
 
   if (applicationLoading)
     return (
@@ -74,13 +104,44 @@ const MyApplications = () => {
                 </span>
                 {application.status === "pending" && (
                   <>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[400px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-center text-xl font-bold">
+                            Are you sure?
+                          </DialogTitle>
+                          <DialogDescription className="text-center">
+                            Do you want to delete your application?
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
+                          <DialogClose asChild>
+                            <Button variant="outline" className="flex-1">
+                              No
+                            </Button>
+                          </DialogClose>
+
+                          <Button
+                            onClick={() =>
+                              handleDeleteApplication(application._id)
+                            }
+                            className="flex-1 bg-primary"
+                          >
+                            Yes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </>
                 )}
               </div>
