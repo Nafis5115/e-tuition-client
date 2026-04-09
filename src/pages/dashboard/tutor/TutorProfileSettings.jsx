@@ -217,7 +217,6 @@ const TutorProfileSettings = () => {
         <div className="space-y-2">
           <Label htmlFor="about">About</Label>
           <Textarea
-            value={tutor?.about}
             {...register("about", { required: true })}
             id="about"
             placeholder="Tell us about yourself..."
