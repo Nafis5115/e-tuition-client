@@ -11,14 +11,16 @@ import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Textarea } from "../../../components/ui/textarea";
+import useRole from "../../../hooks/useRole";
 
-const TutorProfileSettings = ({ role = "student" }) => {
+const TutorProfileSettings = () => {
   const { user, updateUserProfile } = useAuth();
   const [photoPreview, setPhotoPreview] = useState(user?.photoURL);
   const [phoneError, setPhoneError] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const axiosSecure = useAxiosSecure();
   const [loading, setLoading] = useState(false);
+  const { role } = useRole();
 
   const { data: phoneData = {}, isLoading: phoneLoading } = useQuery({
     queryKey: ["user-phone", user?.email],
@@ -39,6 +41,7 @@ const TutorProfileSettings = ({ role = "student" }) => {
       const res = await axiosSecure.get(
         `/api/tutor-details?email=${user?.email}`,
       );
+
       return res.data;
     },
   });
@@ -214,6 +217,7 @@ const TutorProfileSettings = ({ role = "student" }) => {
         <div className="space-y-2">
           <Label htmlFor="about">About</Label>
           <Textarea
+            value={tutor?.about}
             {...register("about", { required: true })}
             id="about"
             placeholder="Tell us about yourself..."
