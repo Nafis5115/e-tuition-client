@@ -4,7 +4,9 @@ import useAuth from "./useAuth";
 import { useNavigate } from "react-router";
 
 const instance = axios.create({
-  baseURL: "http://localhost:3000",
+  // baseURL: "http://localhost:3000",
+  baseURL: "https://e-tuition-server-iota.vercel.app/",
+  withCredentials: true,
 });
 
 const useAxiosSecure = () => {
