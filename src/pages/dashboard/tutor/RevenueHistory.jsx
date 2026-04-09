@@ -1,4 +1,4 @@
-import { ArrowDownRight, TrendingUp } from "lucide-react";
+import { ArrowDownRight, DollarSign, TrendingUp } from "lucide-react";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
@@ -73,6 +73,12 @@ const RevenueHistory = () => {
           ))}
         </div>
       </div>
+      {revenues?.length === 0 && (
+        <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
+          <DollarSign className="mx-auto h-10 w-10 text-muted-foreground" />
+          <p className="mt-3 text-muted-foreground">You have no revenue yet.</p>
+        </div>
+      )}
     </div>
   );
 };
