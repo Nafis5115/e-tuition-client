@@ -10,9 +10,12 @@ import {
   BarChart3,
   UserCog,
   ClipboardList,
+  Menu,
+  X,
 } from "lucide-react";
 import useRole from "../hooks/useRole";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useState } from "react";
 
 const studentLinks = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -78,27 +81,62 @@ const adminLinks = [
 
 const DashboardLayout = () => {
   const { role, roleLoading } = useRole();
+  const [isOpen, setIsOpen] = useState(false);
+
   const links =
     role === "admin"
       ? adminLinks
       : role === "tutor"
         ? tutorLinks
         : studentLinks;
+
   const location = useLocation();
-  if (roleLoading) return <LoadingSpinner></LoadingSpinner>;
+
+  if (roleLoading) return <LoadingSpinner />;
+
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
-      <aside className="hidden w-64 border-r bg-card p-4 md:block">
-        <p className="mb-4 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+    <div className="flex min-h-[calc(100vh-4rem)] relative">
+      <div className="md:hidden flex items-center justify-between p-4 border-b bg-card w-full absolute top-0 left-0 z-40">
+        <button onClick={() => setIsOpen(true)}>
+          <Menu className="h-6 w-6" />
+        </button>
+      </div>
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`
+        fixed md:static top-0 left-0 h-full w-64 bg-card border-r p-4 z-50
+        transform transition-transform duration-300
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 md:block
+      `}
+      >
+        <div className="flex items-center justify-between md:hidden mb-4">
+          <p className="text-sm font-semibold uppercase text-muted-foreground">
+            {role} Panel
+          </p>
+          <button onClick={() => setIsOpen(false)}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <p className="hidden md:block mb-4 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {role === "admin" ? "Admin" : role === "tutor" ? "Tutor" : "Student"}{" "}
           Panel
         </p>
+
         <nav className="space-y-1">
           {links.map((link) => (
             <RouterNavLink
               key={link.path}
               to={link.path}
-              end={link.path === "/dashboard"}
+              onClick={() => setIsOpen(false)}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 location.pathname === link.path
                   ? "bg-primary/10 text-primary"
@@ -112,8 +150,8 @@ const DashboardLayout = () => {
         </nav>
       </aside>
 
-      <div className="flex-1 p-4 md:p-8">
-        <Outlet></Outlet>
+      <div className="flex-1 p-4 md:p-8 mt-14 md:mt-0">
+        <Outlet />
       </div>
     </div>
   );

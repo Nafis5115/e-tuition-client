@@ -31,6 +31,7 @@ const TuitionDetails = () => {
   const from = location.state?.from || "/";
   const [openDialog, setOpenDialog] = useState(false);
   const { role } = useRole();
+  const [applyLoading, setApplyLoading] = useState(false);
   const {
     data: alreadyApplied = {},
     isLoading: checkAppliedLoading,
@@ -67,6 +68,7 @@ const TuitionDetails = () => {
 
   const handleApply = async () => {
     try {
+      setApplyLoading(true);
       await axiosSecure.post("/api/create-tutorApplication", {
         tuitionId: tuition._id,
         tutorEmail: user?.email,
@@ -74,13 +76,14 @@ const TuitionDetails = () => {
       toast.success("Successfully Applied For This Tuition.");
       setOpenDialog(false);
       appliedRefetch();
+      setApplyLoading(false);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong.");
     }
   };
 
-  if (tuitionLoading) return <LoadingSpinner></LoadingSpinner>;
+  if (tuitionLoading || applyLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="section-padding">
       <div className="container mx-auto max-w-3xl">

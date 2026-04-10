@@ -60,7 +60,6 @@ const Navbar = () => {
         <div className="hidden items-center gap-2 md:flex">
           {!loading ? (
             user ? (
-              //
               <>
                 <Button variant="ghost" size="sm" asChild>
                   <Link
@@ -129,10 +128,18 @@ const Navbar = () => {
           <div className="mt-3 flex flex-col gap-2">
             {!loading ? (
               user ? (
-                //
                 <>
                   <Button variant="ghost" size="sm" asChild>
-                    <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                    <Link
+                      to={
+                        role === "student"
+                          ? "/dashboard"
+                          : role === "tutor"
+                            ? "/dashboard/tutor"
+                            : "/dashboard/admin"
+                      }
+                      onClick={() => setMobileOpen(false)}
+                    >
                       <LayoutDashboard className="mr-1 h-4 w-4" /> Dashboard
                     </Link>
                   </Button>

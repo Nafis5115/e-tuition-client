@@ -6,10 +6,12 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { capitalizeFirstWord } from "../../../lib/utils";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useState } from "react";
 
 const AppliedTutors = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const location = useLocation();
   const { data: appliedTutors = [], isLoading: tutorLoading } = useQuery({
     queryKey: ["applied-tutors", user?.email],
@@ -30,15 +32,16 @@ const AppliedTutors = () => {
       email: user?.email,
       tutorEmail: tutor.tutorEmail,
     };
-
+    setPaymentLoading(true);
     const res = await axiosSecure.post(
       "/api/create-checkout-session",
       tutorInfo,
     );
+    setPaymentLoading(false);
     window.location.href = res.data.url;
   };
 
-  if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
+  if (tutorLoading || paymentLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
       <h1 className="text-2xl font-bold">Applied Tutors</h1>
