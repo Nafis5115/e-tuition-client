@@ -15,10 +15,14 @@ import { Label } from "../ui/label";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import LoadingSpinner from "../LoadingSpinner";
 
 const BecomeTutorModal = ({ setOpenDialog }) => {
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
+  const [submitLoading, setSubmitLoading] = useState(false);
   const { user } = useAuth();
   const {
     register,
@@ -75,8 +79,10 @@ const BecomeTutorModal = ({ setOpenDialog }) => {
         qualifications: formattedQualifications,
         subjects: formattedSubjects,
       };
-
+      setSubmitLoading(true);
       await axiosSecure.post("/api/create-tutorProfile", newTutorProfile);
+      queryClient.invalidateQueries(["tutor-application-status", user?.email]);
+      setSubmitLoading(false);
       toast.success("Your application submitted successfully.");
       setOpenDialog(false);
     } catch (error) {
@@ -84,6 +90,8 @@ const BecomeTutorModal = ({ setOpenDialog }) => {
       toast.error("Something went wrong.");
     }
   };
+
+  if (submitLoading) return <LoadingSpinner></LoadingSpinner>;
 
   if (tutorStatus.status === "pending") {
     return (

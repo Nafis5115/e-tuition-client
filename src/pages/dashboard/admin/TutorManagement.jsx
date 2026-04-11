@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { Link, useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -7,10 +7,21 @@ import { Button } from "../../../components/ui/button";
 import { CheckCircle, Eye, XCircle } from "lucide-react";
 import { capitalizeFirstWord } from "../../../lib/utils";
 import toast from "react-hot-toast";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
 
 const TutorManagement = () => {
   const axiosSecure = useAxiosSecure();
   const location = useLocation();
+  const [tutorStatusLoading, setTutorStatusLoading] = useState(false);
   const {
     data: tutors = [],
     isLoading: tutorLoading,
@@ -23,19 +34,22 @@ const TutorManagement = () => {
     },
   });
   const handleTutorRequest = async (email, role, status) => {
+    setTutorStatusLoading(true);
     await axiosSecure
       .patch(`/api/manage-tutor/${email}`, { role, status })
-      .then((res) => {
+      .then(async (res) => {
         if (res.data.role.modifiedCount && res.data.status.modifiedCount) {
-          refetch();
+          await refetch();
           toast.success(
             `Application ${capitalizeFirstWord(status)} Successfully.`,
           );
         }
       })
       .catch((e) => console.log(e));
+    setTutorStatusLoading(false);
   };
-  if (tutorLoading) return <LoadingSpinner></LoadingSpinner>;
+  if (tutorLoading || tutorStatusLoading)
+    return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
       <h1 className="text-2xl font-bold">Tutor Management</h1>
@@ -76,25 +90,86 @@ const TutorManagement = () => {
                 </Button>
                 {tutor.status === "pending" ? (
                   <>
-                    <Button
-                      size="sm"
-                      className="gap-1"
-                      onClick={() =>
-                        handleTutorRequest(tutor.email, "tutor", "approved")
-                      }
-                    >
-                      <CheckCircle className="h-4 w-4" /> Accept
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-1 text-destructive"
-                      onClick={() =>
-                        handleTutorRequest(tutor.email, "student", "rejected")
-                      }
-                    >
-                      <XCircle className="h-4 w-4" /> Reject
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" className="gap-1">
+                          <CheckCircle className="h-4 w-4" /> Accept
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[400px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-center text-xl font-bold">
+                            Are you sure?
+                          </DialogTitle>
+                          <DialogDescription className="text-center">
+                            Do you want to accept this application?
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
+                          <DialogClose asChild>
+                            <Button variant="outline" className="flex-1">
+                              No
+                            </Button>
+                          </DialogClose>
+
+                          <Button
+                            onClick={() =>
+                              handleTutorRequest(
+                                tutor.email,
+                                "tutor",
+                                "approved",
+                              )
+                            }
+                            className="flex-1 bg-primary"
+                          >
+                            Yes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1 text-destructive"
+                        >
+                          <XCircle className="h-4 w-4" /> Reject
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[400px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-center text-xl font-bold">
+                            Are you sure?
+                          </DialogTitle>
+                          <DialogDescription className="text-center">
+                            Do you want to accept this application?
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
+                          <DialogClose asChild>
+                            <Button variant="outline" className="flex-1">
+                              No
+                            </Button>
+                          </DialogClose>
+
+                          <Button
+                            onClick={() =>
+                              handleTutorRequest(
+                                tutor.email,
+                                "student",
+                                "rejected",
+                              )
+                            }
+                            className="flex-1 bg-primary"
+                          >
+                            Yes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </>
                 ) : (
                   <span

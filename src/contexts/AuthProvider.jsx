@@ -61,8 +61,6 @@ const AuthProvider = ({ children }) => {
       setLoading(false);
       if (currentUser) {
         setUser(currentUser);
-      } else {
-        console.log("user logged out");
       }
     });
     return () => {

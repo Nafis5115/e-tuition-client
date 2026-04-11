@@ -9,6 +9,7 @@ import UserTuitionCard from "../../../components/cards/tuition/UserTuitionCard";
 import { useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const MyTuitions = () => {
   const { user } = useAuth();
@@ -46,6 +47,7 @@ const MyTuitions = () => {
     }
   };
 
+  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -60,34 +62,27 @@ const MyTuitions = () => {
         </Button>
       </div>
 
-      {!isLoading ? (
-        <div className="mt-6 space-y-4">
-          {data.data?.map((tuition) => (
-            <UserTuitionCard
-              key={tuition._id}
-              tuition={tuition}
-              handleDeleteTuition={handleDeleteTuition}
-            ></UserTuitionCard>
-          ))}
-          {data.data?.length === 0 && (
-            <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
-              <BookOpen className="mx-auto h-10 w-10 text-muted-foreground" />
-              <p className="mt-3 text-muted-foreground">
-                No tuitions posted yet.
-              </p>
-              <Button className="mt-4" asChild>
-                <Link to="/dashboard/post-tuition">
-                  Post Your First Tuition
-                </Link>
-              </Button>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="flex justify-center text-center">
-          <Loader2 className="animate-spin w-6 h-6 text-primary " />
-        </div>
-      )}
+      <div className="mt-6 space-y-4">
+        {data.data?.map((tuition) => (
+          <UserTuitionCard
+            key={tuition._id}
+            tuition={tuition}
+            handleDeleteTuition={handleDeleteTuition}
+          ></UserTuitionCard>
+        ))}
+        {data.data?.length === 0 && (
+          <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
+            <BookOpen className="mx-auto h-10 w-10 text-muted-foreground" />
+            <p className="mt-3 text-muted-foreground">
+              No tuitions posted yet.
+            </p>
+            <Button className="mt-4" asChild>
+              <Link to="/dashboard/post-tuition">Post Your First Tuition</Link>
+            </Button>
+          </div>
+        )}
+      </div>
+
       {data?.totalPages > 1 && (
         <div className="mt-8 flex items-center justify-center gap-2">
           <Button

@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Dialog, DialogTrigger } from "../components/ui/dialog";
 import BecomeTutorModal from "../components/modals/BecomeTutorModal";
+import useRole from "../hooks/useRole";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -75,6 +76,7 @@ const features = [
 const HomePage = () => {
   const axiosInstance = useAxios();
   const location = useLocation();
+  const { role } = useRole();
   const [openDialog, setOpenDialog] = useState(false);
   const { data: tuitions = [], isLoading } = useQuery({
     queryKey: ["index-tuitions"],
@@ -125,19 +127,21 @@ const HomePage = () => {
                   Browse Tuitions <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
-              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
-                  >
-                    Become a Tutor
-                  </Button>
-                </DialogTrigger>
+              {role === "tutor" || (
+                <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
+                    >
+                      Become a Tutor
+                    </Button>
+                  </DialogTrigger>
 
-                <BecomeTutorModal setOpenDialog={setOpenDialog} />
-              </Dialog>
+                  <BecomeTutorModal setOpenDialog={setOpenDialog} />
+                </Dialog>
+              )}
             </motion.div>
             <motion.div
               custom={3}

@@ -35,9 +35,9 @@ const TuitionManagement = () => {
     setUpdateStatusLoading(true);
     await axiosSecure
       .patch(`/api/manage-tuition/${id}`, { status })
-      .then((res) => {
+      .then(async (res) => {
         if (res.data.modifiedCount) {
-          refetch();
+          await refetch();
           setUpdateStatusLoading(false);
           toast.success(`Successfully ${capitalizeFirstWord(status)} Tuition.`);
         }

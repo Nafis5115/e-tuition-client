@@ -7,13 +7,28 @@ import { useQuery } from "@tanstack/react-query";
 import { capitalizeFirstWord } from "../../../lib/utils";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
+import toast from "react-hot-toast";
 
 const AppliedTutors = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [paymentLoading, setPaymentLoading] = useState(false);
   const location = useLocation();
-  const { data: appliedTutors = [], isLoading: tutorLoading } = useQuery({
+  const {
+    data: appliedTutors = [],
+    isLoading: tutorLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["applied-tutors", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
@@ -39,6 +54,20 @@ const AppliedTutors = () => {
     );
     setPaymentLoading(false);
     window.location.href = res.data.url;
+  };
+
+  const handleRejectTutor = async (id) => {
+    setPaymentLoading(true);
+    await axiosSecure
+      .patch(`/api/reject-applied-tutors/${id}`)
+      .then(async (res) => {
+        if (res.data.modifiedCount) {
+          await refetch();
+          toast.success("Successfully Rejected Tutor.");
+        }
+      })
+      .catch((e) => console.log(e));
+    setPaymentLoading(false);
   };
 
   if (tutorLoading || paymentLoading) return <LoadingSpinner></LoadingSpinner>;
@@ -95,13 +124,42 @@ const AppliedTutors = () => {
                     >
                       <CheckCircle className="h-4 w-4" /> Accept
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-1 text-destructive"
-                    >
-                      <XCircle className="h-4 w-4" /> Reject
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1 text-destructive"
+                        >
+                          <XCircle className="h-4 w-4" /> Reject
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[400px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-center text-xl font-bold">
+                            Are you sure?
+                          </DialogTitle>
+                          <DialogDescription className="text-center">
+                            Do you want to accept this application?
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter className="flex flex-row justify-center gap-3 sm:justify-center">
+                          <DialogClose asChild>
+                            <Button variant="outline" className="flex-1">
+                              No
+                            </Button>
+                          </DialogClose>
+
+                          <Button
+                            onClick={() => handleRejectTutor(tutor._id)}
+                            className="flex-1 bg-primary"
+                          >
+                            Yes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </>
                 ) : (
                   <span
