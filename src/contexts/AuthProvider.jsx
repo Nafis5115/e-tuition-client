@@ -51,17 +51,16 @@ const AuthProvider = ({ children }) => {
     return updateProfile(auth.currentUser, profile);
   };
 
-  const resetPassword = (email) => {
+  const resetPassword = async (email) => {
     setLoading(true);
     return sendPasswordResetEmail(auth, email).finally(() => setLoading(false));
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
       setLoading(false);
       if (currentUser) {
-        console.log(currentUser);
+        setUser(currentUser);
       } else {
         console.log("user logged out");
       }

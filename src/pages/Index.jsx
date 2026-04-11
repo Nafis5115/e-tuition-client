@@ -226,14 +226,23 @@ const HomePage = () => {
               </motion.div>
             ))}
           </div>
-
-          <div className="mt-8 text-center">
-            <Button variant="default" asChild>
-              <Link to="/tuitions">
-                View All Tuitions <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+          {tuitions.length === 0 && (
+            <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
+              <BookOpen className="mx-auto h-10 w-10 text-muted-foreground" />
+              <p className="mt-3 text-muted-foreground">
+                No tuition posted yet.
+              </p>
+            </div>
+          )}
+          {tuitions.length > 0 && (
+            <div className="mt-8 text-center">
+              <Button variant="default" asChild>
+                <Link to="/tuitions">
+                  View All Tuitions <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 

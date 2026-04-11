@@ -111,7 +111,7 @@ const DashboardLayout = () => {
 
       <aside
         className={`
-        fixed md:static top-0 left-0 h-full w-64 bg-card border-r p-4 z-50
+        fixed md:static top-16 left-0 h-[calc(100vh-4rem)]  w-64 bg-card border-r p-4 z-50 md:z-10
         transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0 md:block

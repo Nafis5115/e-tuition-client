@@ -86,7 +86,7 @@ const Payments = () => {
         </div>
         {payments?.length === 0 && (
           <div className="rounded-xl border border-dashed bg-muted/30 p-12 text-center">
-            <DollarSign className="mx-auto h-10 w-10 text-muted-foreground" />
+            <h1 className="mx-auto text-4xl text-muted-foreground">৳</h1>
             <p className="mt-3 text-muted-foreground">
               You have no transactions yet.
             </p>

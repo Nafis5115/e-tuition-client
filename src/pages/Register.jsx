@@ -90,7 +90,7 @@ const Register = () => {
 
       await axiosInstance
         .post("/api/create-user", newUser)
-        .then(() => console.log("User saved to db"))
+        .then(() => {})
         .catch((e) => console.log(e));
 
       toast.success("Registration Successful.");
