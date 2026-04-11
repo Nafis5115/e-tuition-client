@@ -107,6 +107,6 @@ Other Tools:
 
 🌐 Live Project
 
-👉 (Add your live URL here)
+https://e-tuition-f8526.web.app/
 
 ⸻
